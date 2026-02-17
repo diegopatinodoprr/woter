@@ -1,0 +1,19 @@
+# Source
+src/
+
+# Config / tooling
+*.tsbuildinfo
+*.map
+.vscode/
+.idea/
+
+# Tests
+**/*.spec.*
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+*.tgz
+.npmrc
