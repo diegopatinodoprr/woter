@@ -1,0 +1,52 @@
+<div class="home-layout">
+  <header class="topbar">
+    <div class="search-block">
+      <label class="search-label" for="global-search">Rechercher</label>
+      <input id="global-search" type="search" placeholder="Ville, adresse, point d'interet..." />
+    </div>
+
+    <nav class="actions" aria-label="Actions rapides">
+      @for (action of quickActions; track action) {
+      <button type="button" (click)="onQuickActionClick(action)">{{ action }}</button>
+      }
+    </nav>
+  </header>
+
+  <main class="content">
+    <app-home-map></app-home-map>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Woter. Tous droits reserves.</p>
+    <a href="#" aria-label="Mentions legales">Mentions legales</a>
+    <a href="#" aria-label="Politique de confidentialite">Confidentialite</a>
+    <a href="#" aria-label="Contact">Contact</a>
+  </footer>
+</div>
+
+@if (showLoginModal) {
+<div class="login-modal-overlay" (click)="closeLoginModal()" role="presentation">
+  <section class="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title" (click)="$event.stopPropagation()">
+    <header class="login-header">
+      <h2 id="login-title">Connexion</h2>
+      <button type="button" class="close-button" (click)="closeLoginModal()" aria-label="Fermer">✕</button>
+    </header>
+
+    <form class="login-form" (ngSubmit)="submitLogin()">
+      <label for="login-field">Login</label>
+      <input id="login-field" name="login" type="text" [(ngModel)]="loginValue" autocomplete="username" />
+
+      <label for="password-field">Mot de passe</label>
+      <input id="password-field" name="password" type="password" [(ngModel)]="passwordValue" autocomplete="current-password" />
+
+      @if (loginError) {
+      <p class="error-message">{{ loginError }}</p>
+      }
+
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Connexion en cours...' : 'Se connecter' }}
+      </button>
+    </form>
+  </section>
+</div>
+}
