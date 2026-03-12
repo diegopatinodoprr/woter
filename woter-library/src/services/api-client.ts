@@ -1,7 +1,7 @@
-import type { HttpClient } from "../interfaces/http";
+import type { IHttpClient } from '../interfaces/http';
 
 export class ApiClient {
-  constructor(private readonly baseUrl: string, private readonly http: HttpClient) {}
+  constructor(private readonly baseUrl: string, private readonly http: IHttpClient) {}
 
   get<T>(path: string) {
     return this.http.get<T>(this.baseUrl + path);

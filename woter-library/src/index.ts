@@ -1,16 +1,22 @@
-export type { HttpClient, HttpRequestOptions } from "./interfaces/http";
-export type { User } from "./interfaces/user";
+export type { IHttpClient, IHttpRequestOptions } from './interfaces/http';
+export type { IUser } from './interfaces/user';
 export type {
-  AuthTokens,
-  AuthUser,
-  AuthLoginRequest,
-  AuthLoginResponse,
-  AuthRegisterRequest,
-  AuthRegisterResponse,
-  AuthRefreshRequest,
-  AuthRefreshResponse,
-} from "./interfaces/auth";
-export { ApiClient } from "./services/api-client";
-export { ServiceBase } from "./services/service-base";
-export { AuthService } from "./services/auth-service";
-export { RouterBase } from "./server/router-base";
+  IUpdateUserInfoRequest,
+  IUpdateUserInfoResponse,
+  IAddUserFavoriteCitiesRequest,
+  IAddUserFavoriteCitiesResponse,
+  IUserServiceContract,
+} from './services/user-service';
+export type {
+  IAuthTokens,
+  IAuthUser,
+  IAuthLoginRequest,
+  IAuthLoginResponse,
+  IAuthRegisterRequest,
+  IAuthRegisterResponse,
+  IAuthRefreshRequest,
+  IAuthRefreshResponse,
+} from './services/auth-service';
+export { ApiClient } from './services/api-client';
+export { ServiceBase } from './services/service-base';
+export { RouterBase } from './server/router-base';

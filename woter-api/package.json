@@ -1,6 +1,6 @@
 {
   "name": "woter-api",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Woter API",
   "main": "dist/server.js",
   "scripts": {
@@ -14,8 +14,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3"
+    "@diegopatinodoprr/woter-library": "^0.1.4",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6"

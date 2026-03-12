@@ -45,3 +45,4 @@ coverage/
 .cache/
 .tmp/
 .npmrc
+woter-library/*.tgz

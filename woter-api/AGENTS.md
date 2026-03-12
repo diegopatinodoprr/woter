@@ -5,11 +5,18 @@ This file defines the rules to follow when creating or updating API routes for W
 
 ## Route Folder Structure (Required)
 - For each new route, create a folder named after the route.
+- The folder must be created under `src/routes`, following the same structure as `src/routes/authentication`.
 - Inside the folder, create these files:
   - `router.ts`
   - `service.ts`
   - `domain-adapter.ts`
   - `component.ts`
+  - `validator.ts` (when input validation is needed, as done in `authentication`)
+
+## Mandatory Steps For New Route
+1. Create the new route folder in `src/routes` by taking `src/routes/authentication` as the reference pattern.
+2. Implement and wire `router.ts`, `service.ts`, `domain-adapter.ts`, `component.ts` (and `validator.ts` when relevant).
+3. Update `src/server.ts` to mount/register the new route.
 
 ## Component Rule
 - The `component.ts` file must instantiate the other files/classes in its constructor and wire them together.
@@ -24,6 +31,10 @@ This file defines the rules to follow when creating or updating API routes for W
 - Never expose internal errors or stack traces in responses.
 
 ## Request & Response
+- All route inputs and outputs must use shared interfaces defined in `woter-library`.
+- Do not define request/response interfaces locally in `woter-api` when a shared contract is required.
+- Create or update the interface contract in `woter-library` first, then import it into the API route files.
+
 - Use standard HTTP methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
 - `POST` creates a resource; `PUT` replaces; `PATCH` partially updates.
 - Use proper status codes:
