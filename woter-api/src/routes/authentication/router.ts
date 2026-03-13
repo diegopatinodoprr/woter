@@ -27,19 +27,14 @@ export class AuthenticationRouter extends server.RouterBase {
     if (error) return this.badRequest(res, error);
 
     try {
-      const user = await this.service.login(payload.email, payload.password);
+      const type = this.adapter.toLoginType(payload);
+      const user = await this.service.login(payload.email, payload.password, type);
       const tokens = this.service.issueTokens(user);
-      const response = this.adapter.toLoginResponse(user, tokens);
+      const response = this.adapter.toLoginResponse(tokens);
       return this.ok(res, response);
     } catch (err) {
       if (err instanceof Error && err.message === "INVALID_CREDENTIALS") {
         return this.unauthorized(res, "Invalid credentials");
-      }
-      if (err instanceof Error && err.message.includes("MONGO_BDD_URL")) {
-        return this.badRequest(res, err.message);
-      }
-      if (err instanceof Error && err.message.includes("ECONNREFUSED")) {
-        return this.fail(res, 503, "Database unavailable", "DATABASE_UNAVAILABLE");
       }
       return this.fail(res, 500);
     }
@@ -58,12 +53,6 @@ export class AuthenticationRouter extends server.RouterBase {
     } catch (err) {
       if (err instanceof Error && err.message === "USER_ALREADY_EXISTS") {
         return this.conflict(res, "User already exists");
-      }
-      if (err instanceof Error && err.message.includes("MONGO_BDD_URL")) {
-        return this.badRequest(res, err.message);
-      }
-      if (err instanceof Error && err.message.includes("ECONNREFUSED")) {
-        return this.fail(res, 503, "Database unavailable", "DATABASE_UNAVAILABLE");
       }
       return this.fail(res, 500);
     }

@@ -18,7 +18,7 @@ interface AuthUserDocument extends interfaces.IMongoDocument {
 }
 
 export class AuthenticationDomainAdapter {
-  private readonly authCollectionName = "auth_users";
+  private readonly registerCollectionName = "userclients";
 
   toLoginRequest(body: unknown): services.IAuthLoginRequest {
     return body as services.IAuthLoginRequest;
@@ -32,11 +32,8 @@ export class AuthenticationDomainAdapter {
     return body as services.IAuthRefreshRequest;
   }
 
-  toLoginResponse(
-    user: { id: string; email: string; role: "user" | "admin" },
-    tokens: services.IAuthTokens
-  ): services.IAuthLoginResponse {
-    return { user, tokens };
+  toLoginResponse(tokens: services.IAuthTokens): services.IAuthLoginResponse {
+    return tokens as unknown as services.IAuthLoginResponse;
   }
 
   toRegisterResponse(
@@ -50,9 +47,12 @@ export class AuthenticationDomainAdapter {
     return { tokens };
   }
 
-  toSearchAuthUserByEmailRequest(email: string): services.IBddSearchObjectRequest {
+  toSearchAuthUserByEmailRequest(
+    email: string,
+    type: "client" | "admin"
+  ): services.IBddSearchObjectRequest {
     return {
-      collectionName: this.authCollectionName,
+      collectionName: this.getLoginCollectionName(type),
       filter: { email },
     };
   }
@@ -70,9 +70,51 @@ export class AuthenticationDomainAdapter {
     };
 
     return {
-      collectionName: this.authCollectionName,
+      collectionName: this.registerCollectionName,
       document: document as unknown as interfaces.IMongoDocument,
     };
+  }
+
+  toSearchRegisterUserByEmailRequest(email: string): services.IBddSearchObjectRequest {
+    return {
+      collectionName: this.registerCollectionName,
+      filter: { email },
+    };
+  }
+
+  toCreateRegisterUserRequest(
+    user: AuthUserData,
+    passwordHash: string
+  ): services.IBddCreateObjectRequest {
+    const now = new Date().toISOString();
+    const document: AuthUserDocument = {
+      ...user,
+      passwordHash,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    return {
+      collectionName: this.registerCollectionName,
+      document: document as unknown as interfaces.IMongoDocument,
+    };
+  }
+
+  toUpdateLastConnectionDateRequest(
+    email: string,
+    type: "client" | "admin",
+    lastConnectionDate: string
+  ): services.IBddUpdateObjectRequest {
+    return {
+      collectionName: this.getLoginCollectionName(type),
+      filter: { email },
+      update: { lastConnectionDate },
+    };
+  }
+
+  toLoginType(body: services.IAuthLoginRequest): "client" | "admin" {
+    const payload = body as services.IAuthLoginRequest & { type?: "client" | "admin" };
+    return payload.type === "admin" ? "admin" : "client";
   }
 
   toAuthUserFromSearchResponse(
@@ -92,5 +134,9 @@ export class AuthenticationDomainAdapter {
       role: document.role,
       name: document.name,
     };
+  }
+
+  private getLoginCollectionName(type: "client" | "admin"): string {
+    return type === "admin" ? "useradmins" : "userclients";
   }
 }

@@ -21,7 +21,6 @@ export class BddRouter extends server.RouterBase {
     super();
 
     this.router.get("/isAlive/", this.isAlive);
-    this.router.post("/connect", this.jsonParser(), this.connect);
     this.router.post("/object/create", this.jsonParser(), this.createObject);
     this.router.post("/objects/create", this.jsonParser(), this.createObjects);
     this.router.post("/object/search", this.jsonParser(), this.searchObject);
@@ -39,19 +38,6 @@ export class BddRouter extends server.RouterBase {
 
   public isAlive = (req: any, res: any): Promise<any> => {
     return this.returnResp(Promise.resolve(true), req, res);
-  }
-
-  public connect = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const payload = this.adapter.toConnectRequest(req.body);
-      const response = await this.service.connect(payload);
-      return this.ok(res, this.adapter.toConnectResponse(response));
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("MONGO_BDD_URL")) {
-        return this.badRequest(res, error.message);
-      }
-      return this.fail(res, 500);
-    }
   }
 
   public createObject = async (req: Request, res: Response): Promise<Response> => {

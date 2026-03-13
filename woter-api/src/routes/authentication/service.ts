@@ -13,8 +13,8 @@ export class AuthenticationService {
     private readonly bddService = new BddRouteService()
   ) {}
 
-  async login(email: string, password: string) {
-    const response = await this.bddService.searchObject(this.adapter.toSearchAuthUserByEmailRequest(email));
+  async login(email: string, password: string, type: "client" | "admin") {
+    const response = await this.bddService.searchObject(this.adapter.toSearchAuthUserByEmailRequest(email, type));
     const authUser = this.adapter.toAuthUserFromSearchResponse(response);
 
     if (!authUser) {
@@ -26,12 +26,16 @@ export class AuthenticationService {
       throw new Error("INVALID_CREDENTIALS");
     }
 
+    await this.bddService.updateObject(
+      this.adapter.toUpdateLastConnectionDateRequest(email, type, new Date().toISOString())
+    );
+
     return this.adapter.toAuthPublicUser(authUser);
   }
 
   async register(email: string, password: string, name?: string) {
     const existingResponse = await this.bddService.searchObject(
-      this.adapter.toSearchAuthUserByEmailRequest(email)
+      this.adapter.toSearchRegisterUserByEmailRequest(email)
     );
     const existingUser = this.adapter.toAuthUserFromSearchResponse(existingResponse);
     if (existingUser) {
@@ -46,7 +50,7 @@ export class AuthenticationService {
       role: "user" as const,
     };
 
-    await this.bddService.createObject(this.adapter.toCreateAuthUserRequest(user, passwordHash));
+    await this.bddService.createObject(this.adapter.toCreateRegisterUserRequest(user, passwordHash));
 
     return user;
   }

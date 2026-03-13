@@ -1,8 +1,15 @@
 import type { services } from "@diegopatinodoprr/woter-library";
 
 export function validateLogin(body: services.IAuthLoginRequest) {
-  if (!body?.email || !body?.password) {
-    return "email and password are required";
+  const loginBody = body as services.IAuthLoginRequest & { type?: "client" | "admin" };
+  if (!loginBody?.email || !loginBody?.password) {
+    return "email, password and type are required";
+  }
+  if (!loginBody.type) {
+    return "email, password and type are required";
+  }
+  if (loginBody.type !== "client" && loginBody.type !== "admin") {
+    return "type must be client or admin";
   }
   return null;
 }
