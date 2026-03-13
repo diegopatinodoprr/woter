@@ -1,25 +1,19 @@
-import type {
-  IAddUserFavoriteCitiesRequest,
-  IAddUserFavoriteCitiesResponse,
-  IUpdateUserInfoRequest,
-  IUpdateUserInfoResponse,
-  IUser,
-} from '@diegopatinodoprr/woter-library';
+import type { interfaces, services } from "@diegopatinodoprr/woter-library";
 
 export class UserDomainAdapter {
-  toUpdateInfoRequest(body: unknown): IUpdateUserInfoRequest {
-    return body as IUpdateUserInfoRequest;
+  toUpdateInfoRequest(body: unknown): services.IUpdateUserInfoRequest {
+    return body as services.IUpdateUserInfoRequest;
   }
 
-  toAddFavoriteCitiesRequest(body: unknown): IAddUserFavoriteCitiesRequest {
-    return body as IAddUserFavoriteCitiesRequest;
+  toAddFavoriteCitiesRequest(body: unknown): services.IAddUserFavoriteCitiesRequest {
+    return body as services.IAddUserFavoriteCitiesRequest;
   }
 
-  toUpdateInfoResponse(user: IUser): IUpdateUserInfoResponse {
+  toUpdateInfoResponse(user: interfaces.IUser): services.IUpdateUserInfoResponse {
     return { user };
   }
 
-  toAddFavoriteCitiesResponse(user: IUser): IAddUserFavoriteCitiesResponse {
+  toAddFavoriteCitiesResponse(user: interfaces.IUser): services.IAddUserFavoriteCitiesResponse {
     return { user };
   }
 }

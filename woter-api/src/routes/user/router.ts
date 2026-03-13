@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
-import { RouterBase } from "@diegopatinodoprr/woter-library";
+import { server } from "@diegopatinodoprr/woter-library";
 import type { UserDomainAdapter } from "./domain-adapter";
 import type { UserRouteService } from "./service";
 import { validateAddFavoriteCities, validateUpdateInfo } from "./validator";
 
-export class UserRouter extends RouterBase {
+export class UserRouter extends server.RouterBase {
   constructor(
     private readonly service: UserRouteService,
     private readonly adapter: UserDomainAdapter

@@ -1,9 +1,9 @@
-import type { IAddUserFavoriteCitiesRequest, IUpdateUserInfoRequest, IUser } from '@diegopatinodoprr/woter-library';
+import type { interfaces, services } from "@diegopatinodoprr/woter-library";
 
-const users = new Map<string, IUser>();
+const users = new Map<string, interfaces.IUser>();
 
 export class UserRouteService {
-  updateInfo(payload: IUpdateUserInfoRequest): IUser {
+  updateInfo(payload: services.IUpdateUserInfoRequest): interfaces.IUser {
     const user = this.getOrCreateUser(payload.userId);
 
     if (payload.email) {
@@ -20,7 +20,7 @@ export class UserRouteService {
     return user;
   }
 
-  addFavoriteCities(payload: IAddUserFavoriteCitiesRequest): IUser {
+  addFavoriteCities(payload: services.IAddUserFavoriteCitiesRequest): interfaces.IUser {
     const user = this.getOrCreateUser(payload.userId);
     const normalizedCities = payload.cities.map((city) => city.trim()).filter(Boolean);
     const currentCities = user.favoriteCities ?? [];
@@ -32,17 +32,17 @@ export class UserRouteService {
     return user;
   }
 
-  private getOrCreateUser(userId: string): IUser {
+  private getOrCreateUser(userId: string): interfaces.IUser {
     const existingUser = users.get(userId);
     if (existingUser) {
       return existingUser;
     }
 
     const now = new Date().toISOString();
-    const createdUser: IUser = {
+    const createdUser: interfaces.IUser = {
       id: userId,
       email: `${userId}@example.com`,
-      role: 'user',
+      role: "user",
       favoriteCities: [],
       createdAt: now,
       updatedAt: now,

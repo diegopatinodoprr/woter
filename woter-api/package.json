@@ -1,6 +1,6 @@
 {
   "name": "woter-api",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Woter API",
   "main": "dist/server.js",
   "scripts": {
@@ -15,17 +15,18 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@diegopatinodoprr/woter-library": "^0.1.4",
+    "@diegopatinodoprr/woter-library": "file:../woter-library",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.2"
+    "express": "^4.22.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^7.1.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
+    "@types/express": "^4.17.25",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.0",
     "prettier-eslint": "^16.4.2",

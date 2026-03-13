@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
-import { RouterBase } from "@diegopatinodoprr/woter-library";
+import { server } from "@diegopatinodoprr/woter-library";
 import type { AuthenticationService } from "./service";
 import type { AuthenticationDomainAdapter } from "./domain-adapter";
 import { validateLogin, validateRefresh, validateRegister } from "./validator";
 
-export class AuthenticationRouter extends RouterBase {
+export class AuthenticationRouter extends server.RouterBase {
   constructor(
     private readonly service: AuthenticationService,
     private readonly adapter: AuthenticationDomainAdapter
