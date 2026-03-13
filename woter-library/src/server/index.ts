@@ -1,1 +1,1 @@
-export { RouterBase } from './router-base';
+export { RouterBase } from './router-base.js';

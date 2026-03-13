@@ -1,4 +1,7 @@
-export class ServiceBase {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ServiceBase = void 0;
+class ServiceBase {
     api;
     constructor(api) {
         this.api = api;
@@ -19,4 +22,5 @@ export class ServiceBase {
         return this.api.del(path);
     }
 }
+exports.ServiceBase = ServiceBase;
 //# sourceMappingURL=service-base.js.map

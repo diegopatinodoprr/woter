@@ -1,18 +1,24 @@
-import express from "express";
-export class RouterBase {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RouterBase = void 0;
+const express_1 = __importDefault(require("express"));
+class RouterBase {
     router;
     constructor() {
-        this.router = express.Router();
+        this.router = express_1.default.Router();
         this.configure();
     }
     // Override in subclasses to register routes
     configure() { }
     // Body parsers
     jsonParser() {
-        return express.json();
+        return express_1.default.json();
     }
     urlencodedParser() {
-        return express.urlencoded({ extended: true });
+        return express_1.default.urlencoded({ extended: true });
     }
     // Response helpers
     ok(res, data) {
@@ -60,4 +66,5 @@ export class RouterBase {
         return req.body;
     }
 }
+exports.RouterBase = RouterBase;
 //# sourceMappingURL=router-base.js.map

@@ -1,9 +1,9 @@
-export * as interfaces from './interfaces';
-export * as services from './services';
-export * as server from './server';
+export * as interfaces from './interfaces/index.js';
+export * as services from './services/index.js';
+export * as server from './server/index.js';
 
 // Backward-compatible direct exports
-export type { IHttpClient, IHttpRequestOptions, IMongoConnectionConfig, IMongoDatabaseServiceContract, IMongoDocument, IMongoEnvironment, IMongoFindOptions, IUser } from './interfaces';
+export type { IHttpClient, IHttpRequestOptions, IMongoConnectionConfig, IMongoDatabaseServiceContract, IMongoDocument, IMongoEnvironment, IMongoFindOptions, IUser } from './interfaces/index.js';
 export type {
   IUpdateUserInfoRequest,
   IUpdateUserInfoResponse,
@@ -36,6 +36,6 @@ export type {
   IAuthRegisterResponse,
   IAuthRefreshRequest,
   IAuthRefreshResponse,
-} from './services';
-export { ApiClient, MongoConfigService, ServiceBase } from './services';
-export { RouterBase } from './server';
+} from './services/index.js';
+export { ApiClient, MongoConfigService, ServiceBase } from './services/index.js';
+export { RouterBase } from './server/index.js';

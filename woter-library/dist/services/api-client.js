@@ -1,4 +1,7 @@
-export class ApiClient {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApiClient = void 0;
+class ApiClient {
     baseUrl;
     http;
     constructor(baseUrl, http) {
@@ -21,4 +24,5 @@ export class ApiClient {
         return this.http.del(this.baseUrl + path);
     }
 }
+exports.ApiClient = ApiClient;
 //# sourceMappingURL=api-client.js.map

@@ -1,6 +1,6 @@
 {
   "name": "@diegopatinodoprr/woter-library",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Shared interfaces and services for Woter platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

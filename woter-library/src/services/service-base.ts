@@ -1,4 +1,4 @@
-import type { ApiClient } from "./api-client";
+import type { ApiClient } from "./api-client.js";
 
 export class ServiceBase {
   constructor(protected readonly api: ApiClient) {}

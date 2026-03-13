@@ -1,11 +1,12 @@
 {
   "name": "woter-api",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Woter API",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
+    "prestart": "npm run build",
     "start": "node dist/server.js",
     "test": "echo \"No tests yet\" && exit 0",
     "lint": "tsc -p tsconfig.json --noEmit"
@@ -15,7 +16,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@diegopatinodoprr/woter-library": "file:../woter-library",
+    "@diegopatinodoprr/woter-library": "^0.1.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",

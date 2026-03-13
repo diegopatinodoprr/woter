@@ -1,4 +1,7 @@
-export class MongoConfigService {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MongoConfigService = void 0;
+class MongoConfigService {
     environment;
     constructor(environment = MongoConfigService.readProcessEnvironment()) {
         this.environment = environment;
@@ -23,4 +26,5 @@ export class MongoConfigService {
         };
     }
 }
+exports.MongoConfigService = MongoConfigService;
 //# sourceMappingURL=mongo-config-service.js.map

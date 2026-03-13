@@ -1,6 +1,6 @@
-export { ApiClient } from './api-client';
-export { MongoConfigService } from './mongo-config-service';
-export { ServiceBase } from './service-base';
+export { ApiClient } from './api-client.js';
+export { MongoConfigService } from './mongo-config-service.js';
+export { ServiceBase } from './service-base.js';
 
 export type {
   IBddConnectRequest,
@@ -21,7 +21,7 @@ export type {
   IBddDeleteObjectResponse,
   IBddDeleteObjectsRequest,
   IBddDeleteObjectsResponse,
-} from './bdd-service';
+} from './bdd-service.js';
 export type {
   IAuthTokens,
   IAuthUser,
@@ -31,11 +31,11 @@ export type {
   IAuthRegisterResponse,
   IAuthRefreshRequest,
   IAuthRefreshResponse,
-} from './auth-service';
+} from './auth-service.js';
 export type {
   IUpdateUserInfoRequest,
   IUpdateUserInfoResponse,
   IAddUserFavoriteCitiesRequest,
   IAddUserFavoriteCitiesResponse,
   IUserServiceContract,
-} from './user-service';
+} from './user-service.js';
