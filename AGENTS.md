@@ -50,6 +50,8 @@ Sous-projets principaux:
 ## Scripts et versioning
 - Pour bump patch sans commit/tag Git, utiliser:
   - `./bump-all-patch-no-git.sh`
+- Si `woter-library` est modifié, avant de mettre à jour les autres sous-projets (`woter-api`, `woter-frontend`, `woter-admin`), lancer obligatoirement:
+  - `./release-library-and-update-all.sh`
 - Pour un script nouveau, le créer à la racine si demandé globalement, sinon dans le sous-projet concerné.
 
 ## En cas d'ambiguïté
