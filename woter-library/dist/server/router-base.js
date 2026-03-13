@@ -51,6 +51,11 @@ class RouterBase {
     fail(res, status, message = "Internal Server Error", code = "INTERNAL") {
         return res.status(status).json({ error: { code, message } });
     }
+    returnResp(request, _req, res) {
+        return request
+            .then((data) => this.ok(res, data))
+            .catch(() => this.fail(res, 500));
+    }
     // Public accessor
     getRouter() {
         return this.router;

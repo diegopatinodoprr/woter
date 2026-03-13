@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { server } from "@diegopatinodoprr/woter-library";
 import type { BddDomainAdapter } from "./domain-adapter";
 import type { BddRouteService } from "./service";
@@ -19,140 +19,165 @@ export class BddRouter extends server.RouterBase {
     private readonly adapter: BddDomainAdapter
   ) {
     super();
+
+    this.router.get("/isAlive/", this.isAlive);
+    this.router.post("/connect", this.jsonParser(), this.connect);
+    this.router.post("/object/create", this.jsonParser(), this.createObject);
+    this.router.post("/objects/create", this.jsonParser(), this.createObjects);
+    this.router.post("/object/search", this.jsonParser(), this.searchObject);
+    this.router.post("/objects/search", this.jsonParser(), this.searchObjects);
+    this.router.post("/object/update", this.jsonParser(), this.updateObject);
+    this.router.post("/objects/update", this.jsonParser(), this.updateObjects);
+    this.router.post("/object/delete", this.jsonParser(), this.deleteObject);
+    this.router.post("/objects/delete", this.jsonParser(), this.deleteObjects);
+
   }
 
-  protected configure(): void {
-    this.router.post("/connect", this.jsonParser(), async (req: Request, res: Response) => {
-      try {
-        const payload = this.adapter.toConnectRequest(req.body);
-        const response = await this.service.connect(payload);
-        return this.ok(res, this.adapter.toConnectResponse(response));
-      } catch (error) {
-        if (error instanceof Error && error.message.includes("MONGO_BDD_URL")) {
-          return this.badRequest(res, error.message);
-        }
-        return this.fail(res, 500);
-      }
-    });
+  protected parseBody(req: Request, res: Response, next: NextFunction): void {
+    this.jsonParser()(req, res, next);
+  }
 
-    this.router.post("/object/create", this.jsonParser(), async (req: Request, res: Response) => {
-      const payload = this.adapter.toCreateObjectRequest(req.body);
-      const validationError = validateCreateObject(payload);
-      if (validationError) {
-        return this.badRequest(res, validationError);
-      }
+  public isAlive = (req: any, res: any): Promise<any> => {
+    return this.returnResp(Promise.resolve(true), req, res);
+  }
 
-      try {
-        const response = await this.service.createObject(payload);
-        return this.created(res, this.adapter.toCreateObjectResponse(response));
-      } catch {
-        return this.fail(res, 500);
+  public connect = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const payload = this.adapter.toConnectRequest(req.body);
+      const response = await this.service.connect(payload);
+      return this.ok(res, this.adapter.toConnectResponse(response));
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("MONGO_BDD_URL")) {
+        return this.badRequest(res, error.message);
       }
-    });
+      return this.fail(res, 500);
+    }
+  }
 
-    this.router.post("/objects/create", this.jsonParser(), async (req: Request, res: Response) => {
-      const payload = this.adapter.toCreateObjectsRequest(req.body);
-      const validationError = validateCreateObjects(payload);
-      if (validationError) {
-        return this.badRequest(res, validationError);
-      }
+  public createObject = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toCreateObjectRequest(req.body);
+    const validationError = validateCreateObject(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
 
-      try {
-        const response = await this.service.createObjects(payload);
-        return this.created(res, this.adapter.toCreateObjectsResponse(response));
-      } catch {
-        return this.fail(res, 500);
-      }
-    });
+    try {
+      const response = await this.service.createObject(payload);
+      return this.created(res, this.adapter.toCreateObjectResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
 
-    this.router.post("/object/search", this.jsonParser(), async (req: Request, res: Response) => {
-      const payload = this.adapter.toSearchObjectRequest(req.body);
-      const validationError = validateSearchObject(payload);
-      if (validationError) {
-        return this.badRequest(res, validationError);
-      }
+  public createObjects = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toCreateObjectsRequest(req.body);
+    const validationError = validateCreateObjects(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
 
-      try {
-        const response = await this.service.searchObject(payload);
-        return this.ok(res, this.adapter.toSearchObjectResponse(response));
-      } catch {
-        return this.fail(res, 500);
-      }
-    });
+    try {
+      const response = await this.service.createObjects(payload);
+      return this.created(res, this.adapter.toCreateObjectsResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
 
-    this.router.post("/objects/search", this.jsonParser(), async (req: Request, res: Response) => {
-      const payload = this.adapter.toSearchObjectsRequest(req.body);
-      const validationError = validateSearchObjects(payload);
-      if (validationError) {
-        return this.badRequest(res, validationError);
-      }
+  public searchObject = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toSearchObjectRequest(req.body);
+    const validationError = validateSearchObject(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
 
-      try {
-        const response = await this.service.searchObjects(payload);
-        return this.ok(res, this.adapter.toSearchObjectsResponse(response));
-      } catch {
-        return this.fail(res, 500);
-      }
-    });
+    try {
+      const response = await this.service.searchObject(payload);
+      return this.ok(res, this.adapter.toSearchObjectResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
 
-    this.router.post("/object/update", this.jsonParser(), async (req: Request, res: Response) => {
-      const payload = this.adapter.toUpdateObjectRequest(req.body);
-      const validationError = validateUpdateObject(payload);
-      if (validationError) {
-        return this.badRequest(res, validationError);
-      }
+  public searchObjects = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toSearchObjectsRequest(req.body);
+    const validationError = validateSearchObjects(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
 
-      try {
-        const response = await this.service.updateObject(payload);
-        return this.ok(res, this.adapter.toUpdateObjectResponse(response));
-      } catch {
-        return this.fail(res, 500);
-      }
-    });
+    try {
+      const response = await this.service.searchObjects(payload);
+      return this.ok(res, this.adapter.toSearchObjectsResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
 
-    this.router.post("/objects/update", this.jsonParser(), async (req: Request, res: Response) => {
-      const payload = this.adapter.toUpdateObjectsRequest(req.body);
-      const validationError = validateUpdateObjects(payload);
-      if (validationError) {
-        return this.badRequest(res, validationError);
-      }
+  public updateObject = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toUpdateObjectRequest(req.body);
+    const validationError = validateUpdateObject(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
 
-      try {
-        const response = await this.service.updateObjects(payload);
-        return this.ok(res, this.adapter.toUpdateObjectsResponse(response));
-      } catch {
-        return this.fail(res, 500);
-      }
-    });
+    try {
+      const response = await this.service.updateObject(payload);
+      return this.ok(res, this.adapter.toUpdateObjectResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
 
-    this.router.post("/object/delete", this.jsonParser(), async (req: Request, res: Response) => {
-      const payload = this.adapter.toDeleteObjectRequest(req.body);
-      const validationError = validateDeleteObject(payload);
-      if (validationError) {
-        return this.badRequest(res, validationError);
-      }
+  public updateObjects = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toUpdateObjectsRequest(req.body);
+    const validationError = validateUpdateObjects(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
 
-      try {
-        const response = await this.service.deleteObject(payload);
-        return this.ok(res, this.adapter.toDeleteObjectResponse(response));
-      } catch {
-        return this.fail(res, 500);
-      }
-    });
+    try {
+      const response = await this.service.updateObjects(payload);
+      return this.ok(res, this.adapter.toUpdateObjectsResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
 
-    this.router.post("/objects/delete", this.jsonParser(), async (req: Request, res: Response) => {
-      const payload = this.adapter.toDeleteObjectsRequest(req.body);
-      const validationError = validateDeleteObjects(payload);
-      if (validationError) {
-        return this.badRequest(res, validationError);
-      }
+  public deleteObject = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toDeleteObjectRequest(req.body);
+    const validationError = validateDeleteObject(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
 
-      try {
-        const response = await this.service.deleteObjects(payload);
-        return this.ok(res, this.adapter.toDeleteObjectsResponse(response));
-      } catch {
-        return this.fail(res, 500);
-      }
-    });
+    try {
+      const response = await this.service.deleteObject(payload);
+      return this.ok(res, this.adapter.toDeleteObjectResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
+
+  public deleteObjects = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toDeleteObjectsRequest(req.body);
+    const validationError = validateDeleteObjects(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
+
+    try {
+      const response = await this.service.deleteObjects(payload);
+      return this.ok(res, this.adapter.toDeleteObjectsResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
+
+  // Temporary shim until woter-api consumes @diegopatinodoprr/woter-library >= 0.1.6
+  protected returnResp<T>(request: Promise<T>, _req: Request, res: Response): Promise<any> {
+    return request
+      .then((data) => this.ok(res, data))
+      .catch(() => this.fail(res, 500));
   }
 }

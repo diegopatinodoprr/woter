@@ -116,8 +116,8 @@ export class HomeMapComponent implements AfterViewInit, OnDestroy {
     if (!this.userAccuracyCircle) {
       this.userAccuracyCircle = L.circle(userLatLng, {
         radius: accuracy,
-        color: '#0d6d8d',
-        fillColor: '#27a4c4',
+        color: '#134074',
+        fillColor: '#8da9c4',
         fillOpacity: 0.2,
         weight: 1
       }).addTo(this.mapInstance);

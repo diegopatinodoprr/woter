@@ -1,6 +1,15 @@
 import { Component } from '@angular/core';
 import { AuthenticationApiService } from '../../../services/authentication.service';
 
+type WaterStatus = 'Excellente' | 'Stable' | 'Dégradée';
+
+interface WaterZone {
+  label: string;
+  city: string;
+  status: WaterStatus;
+  quality: number;
+}
+
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
@@ -8,7 +17,16 @@ import { AuthenticationApiService } from '../../../services/authentication.servi
   standalone: false
 })
 export class HomePageComponent {
-  protected readonly quickActions = ['Connexion', 'Inscription', 'Aide'];
+  protected readonly quickActions = [
+    { label: 'Connexion', icon: 'pi pi-user' },
+    { label: 'Inscription', icon: 'pi pi-user-plus' },
+    { label: 'Aide', icon: 'pi pi-question-circle' }
+  ];
+  protected readonly waterZones: WaterZone[] = [
+    { label: 'Canal Saint-Martin', city: 'Paris', status: 'Excellente', quality: 95 },
+    { label: 'Parc de la Tête d Or', city: 'Lyon', status: 'Stable', quality: 84 },
+    { label: 'Vieux-Port', city: 'Marseille', status: 'Dégradée', quality: 61 }
+  ];
   protected showLoginModal = false;
   protected loginValue = '';
   protected passwordValue = '';
@@ -23,17 +41,10 @@ export class HomePageComponent {
     }
   }
 
-  protected getQuickActionIcon(action: string): string {
-    switch (action) {
-      case 'Connexion':
-        return '👤';
-      case 'Inscription':
-        return '🧭';
-      case 'Aide':
-        return '💧';
-      default:
-        return '•';
-    }
+  protected getStatusSeverity(status: WaterStatus): 'success' | 'warn' | 'danger' {
+    if (status === 'Excellente') return 'success';
+    if (status === 'Stable') return 'warn';
+    return 'danger';
   }
 
   protected openLoginModal(): void {
@@ -57,15 +68,10 @@ export class HomePageComponent {
     this.loginError = '';
 
     try {
-      const response = await this.authenticationService.login({
+      await this.authenticationService.login({
         email: this.loginValue,
         password: this.passwordValue
       });
-
-      localStorage.setItem('woter_access_token', response.tokens.accessToken);
-      if (response.tokens.refreshToken) {
-        localStorage.setItem('woter_refresh_token', response.tokens.refreshToken);
-      }
 
       this.passwordValue = '';
       this.closeLoginModal();

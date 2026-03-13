@@ -1,34 +1,75 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
+import { BddRouteService } from "../bdd/service";
+import type { AuthenticationDomainAdapter } from "./domain-adapter";
 
 const ACCESS_TOKEN_TTL_SECONDS = 60 * 60; // 1h
 const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 30; // 30d
 
 export class AuthenticationService {
+  private isMongoReady = false;
+  private readonly databaseName = process.env.MONGO_DATABASE_NAME;
+
+  constructor(
+    private readonly adapter: AuthenticationDomainAdapter,
+    private readonly bddService = new BddRouteService()
+  ) {}
+
   async login(email: string, password: string) {
-    // TODO: load user + passwordHash from DB by email
-    const storedHash = process.env.DEMO_PASSWORD_HASH;
-    if (storedHash) {
-      const ok = await this.verifyPassword(password, storedHash);
-      if (!ok) {
-        throw new Error("INVALID_CREDENTIALS");
-      }
+    await this.ensureMongoConnection();
+
+    const response = await this.bddService.searchObject(this.adapter.toSearchAuthUserByEmailRequest(email));
+    const authUser = this.adapter.toAuthUserFromSearchResponse(response);
+
+    if (!authUser) {
+      throw new Error("INVALID_CREDENTIALS");
     }
 
-    return { id: "user_1", email, role: "user" as const };
+    const ok = await this.verifyPassword(password, authUser.passwordHash);
+    if (!ok) {
+      throw new Error("INVALID_CREDENTIALS");
+    }
+
+    return this.adapter.toAuthPublicUser(authUser);
   }
 
   async register(email: string, password: string, name?: string) {
-    const passwordHash = await this.hashPassword(password);
-    // TODO: store user + passwordHash in DB
-    void passwordHash;
+    await this.ensureMongoConnection();
 
-    return { id: "user_1", email, name, role: "user" as const };
+    const existingResponse = await this.bddService.searchObject(
+      this.adapter.toSearchAuthUserByEmailRequest(email)
+    );
+    const existingUser = this.adapter.toAuthUserFromSearchResponse(existingResponse);
+    if (existingUser) {
+      throw new Error("USER_ALREADY_EXISTS");
+    }
+
+    const passwordHash = await this.hashPassword(password);
+    const user = {
+      id: randomUUID(),
+      email,
+      name,
+      role: "user" as const,
+    };
+
+    await this.bddService.createObject(this.adapter.toCreateAuthUserRequest(user, passwordHash));
+
+    return user;
   }
 
   async refresh(_refreshToken: string) {
     // TODO: verify refresh token + rotate
     return { id: "user_1", email: "user@example.com", role: "user" as const };
+  }
+
+  private async ensureMongoConnection(): Promise<void> {
+    if (this.isMongoReady) {
+      return;
+    }
+
+    await this.bddService.connect({ databaseName: this.databaseName });
+    this.isMongoReady = true;
   }
 
   issueTokens(user: { id: string; email: string; role: "user" | "admin" }) {

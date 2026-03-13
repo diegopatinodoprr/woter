@@ -6,8 +6,8 @@ export class UserComponent {
   public readonly router: UserRouter;
 
   constructor() {
-    const service = new UserRouteService();
     const adapter = new UserDomainAdapter();
+    const service = new UserRouteService(adapter);
     this.router = new UserRouter(service, adapter);
   }
 }

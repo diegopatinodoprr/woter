@@ -1,68 +1,89 @@
 <div class="home-layout">
-  <header class="topbar">
-    <div class="search-block">
-      <label class="search-label" for="global-search">Trouver une fontaine</label>
-      <p class="search-hint">Acces rapide pour sportifs et randonneurs</p>
-      <input id="global-search" type="search" placeholder="Ville, quartier, parc ou itineraire..." />
+  <header class="hero">
+    <p-tag severity="info" value="Woter Frontend"></p-tag>
+    <h1>Trouvez une fontaine fiable près de vous</h1>
+    <p>Suivez la qualité de l'eau en temps réel et préparez vos trajets urbains ou sportifs.</p>
+
+    <div class="search-row">
+      <input
+        pInputText
+        type="search"
+        placeholder="Ville, quartier, parc ou itinéraire..."
+        aria-label="Recherche d'une fontaine"
+      />
+      <p-button label="Rechercher" icon="pi pi-search"></p-button>
     </div>
 
-    <nav class="actions" aria-label="Actions rapides">
-      @for (action of quickActions; track action) {
-      <button type="button" (click)="onQuickActionClick(action)" [attr.aria-label]="action">
-        <span class="action-icon" aria-hidden="true">{{ getQuickActionIcon(action) }}</span>
-        <span class="action-label">{{ action }}</span>
-      </button>
+    <div class="actions" aria-label="Actions rapides">
+      @for (action of quickActions; track action.label) {
+        <p-button
+          [label]="action.label"
+          [icon]="action.icon"
+          severity="secondary"
+          [outlined]="action.label !== 'Connexion'"
+          (onClick)="onQuickActionClick(action.label)"
+        ></p-button>
       }
-    </nav>
+    </div>
   </header>
 
-  <main class="content">
+  <section class="zone-cards">
+    @for (zone of waterZones; track zone.label) {
+      <p-card>
+        <ng-template pTemplate="title">{{ zone.label }}</ng-template>
+        <ng-template pTemplate="subtitle">{{ zone.city }}</ng-template>
+        <div class="zone-status">
+          <p-tag [severity]="getStatusSeverity(zone.status)" [value]="zone.status"></p-tag>
+          <strong>{{ zone.quality }}%</strong>
+        </div>
+        <p-progressBar [value]="zone.quality"></p-progressBar>
+      </p-card>
+    }
+  </section>
+
+  <main class="map-area">
     <app-home-map></app-home-map>
   </main>
 
   <footer class="site-footer">
-    <p class="footer-copy">
-      <span class="footer-icon" aria-hidden="true">©</span>
-      <span class="footer-label">2026 Woter</span>
-    </p>
-    <a href="#" aria-label="Mentions legales">
-      <span class="footer-icon" aria-hidden="true">⚖</span>
-      <span class="footer-label">Mentions legales</span>
-    </a>
-    <a href="#" aria-label="Politique de confidentialite">
-      <span class="footer-icon" aria-hidden="true">🔒</span>
-      <span class="footer-label">Confidentialite</span>
-    </a>
-    <a href="#" aria-label="Contact">
-      <span class="footer-icon" aria-hidden="true">✉</span>
-      <span class="footer-label">Contact</span>
-    </a>
+    <span>© 2026 Woter</span>
+    <a href="#">Mentions légales</a>
+    <a href="#">Confidentialité</a>
+    <a href="#">Contact</a>
   </footer>
 </div>
 
-@if (showLoginModal) {
-<div class="login-modal-overlay" (click)="closeLoginModal()" role="presentation">
-  <section class="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title" (click)="$event.stopPropagation()">
-    <header class="login-header">
-      <h2 id="login-title">Connexion</h2>
-      <button type="button" class="close-button" (click)="closeLoginModal()" aria-label="Fermer">✕</button>
-    </header>
+<p-dialog
+  header="Connexion"
+  [modal]="true"
+  [(visible)]="showLoginModal"
+  [style]="{ width: '26rem', maxWidth: '95vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="closeLoginModal()"
+>
+  <form class="login-form" (ngSubmit)="submitLogin()">
+    <label for="login-field">Email</label>
+    <input id="login-field" name="login" type="email" pInputText [(ngModel)]="loginValue" />
 
-    <form class="login-form" (ngSubmit)="submitLogin()">
-      <label for="login-field">Login</label>
-      <input id="login-field" name="login" type="text" [(ngModel)]="loginValue" autocomplete="username" />
+    <label for="password-field">Mot de passe</label>
+    <input
+      id="password-field"
+      name="password"
+      type="password"
+      pInputText
+      [(ngModel)]="passwordValue"
+    />
 
-      <label for="password-field">Mot de passe</label>
-      <input id="password-field" name="password" type="password" [(ngModel)]="passwordValue" autocomplete="current-password" />
-
-      @if (loginError) {
+    @if (loginError) {
       <p class="error-message">{{ loginError }}</p>
-      }
+    }
 
-      <button type="submit" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Connexion en cours...' : 'Se connecter' }}
-      </button>
-    </form>
-  </section>
-</div>
-}
+    <p-button
+      type="submit"
+      [label]="isSubmitting ? 'Connexion en cours...' : 'Se connecter'"
+      [loading]="isSubmitting"
+      [disabled]="isSubmitting"
+    ></p-button>
+  </form>
+</p-dialog>

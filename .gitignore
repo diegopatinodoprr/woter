@@ -47,3 +47,4 @@ coverage/
 .npmrc
 woter-library/*.tgz
 woter-api/dist/
+woter-api/.env

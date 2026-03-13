@@ -29,6 +29,16 @@ Ce fichier définit les règles de travail pour les changements frontend dans `w
 - Garder le mapping backend -> modèle UI explicite.
 - Préserver le style existant (Angular + conventions du projet), sans refactor hors sujet.
 
+## PrimeNG (obligatoire pour l'UI)
+- Utiliser PrimeNG comme bibliothèque UI principale.
+- Référence d'installation: `https://primeng.org/installation`.
+- Dépendances attendues: `primeng`, `@primeuix/themes`, `primeicons`, `@angular/animations`.
+- Configuration globale attendue dans `src/app/app.config.ts`:
+  - `provideAnimationsAsync()`
+  - `providePrimeNG({ theme: { preset: Aura } })`
+- Importer `primeicons` dans `src/styles.css`.
+- Pour les nouvelles interfaces, privilégier les composants PrimeNG (`p-button`, `p-card`, `p-tag`, `p-dialog`, `p-progressBar`, etc.).
+
 ## Validation
 - Exécuter la validation pertinente quand possible:
   - `npm run build`

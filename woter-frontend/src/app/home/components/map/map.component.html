@@ -2,9 +2,13 @@
   <div class="location-panel" aria-live="polite">
     <p>{{ locationMessage }}</p>
     @if (canRequestLocation) {
-    <button type="button" (click)="requestUserLocation()" [disabled]="isRequestingLocation">
-      {{ isRequestingLocation ? 'Localisation...' : 'Utiliser ma position' }}
-    </button>
+      <p-button
+        [label]="isRequestingLocation ? 'Localisation...' : 'Utiliser ma position'"
+        icon="pi pi-map-marker"
+        size="small"
+        [disabled]="isRequestingLocation"
+        (onClick)="requestUserLocation()"
+      ></p-button>
     }
   </div>
   <div #mapContainer class="map-canvas"></div>

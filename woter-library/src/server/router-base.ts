@@ -63,6 +63,12 @@ export abstract class RouterBase {
     return res.status(status).json({ error: { code, message } });
   }
 
+  protected returnResp<T>(request: Promise<T>, _req: Request, res: Response): Promise<any> {
+    return request
+      .then((data) => this.ok(res, data))
+      .catch(() => this.fail(res, 500));
+  }
+
   // Public accessor
   getRouter() {
     return this.router;

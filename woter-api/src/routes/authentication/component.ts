@@ -6,8 +6,8 @@ export class AuthenticationComponent {
   public readonly router: AuthenticationRouter;
 
   constructor() {
-    const service = new AuthenticationService();
     const adapter = new AuthenticationDomainAdapter();
+    const service = new AuthenticationService(adapter);
     this.router = new AuthenticationRouter(service, adapter);
   }
 }

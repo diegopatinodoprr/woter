@@ -1,10 +1,19 @@
 import type { interfaces, services } from "@diegopatinodoprr/woter-library";
-
-const users = new Map<string, interfaces.IUser>();
+import { BddRouteService } from "../bdd/service";
+import type { UserDomainAdapter } from "./domain-adapter";
 
 export class UserRouteService {
-  updateInfo(payload: services.IUpdateUserInfoRequest): interfaces.IUser {
-    const user = this.getOrCreateUser(payload.userId);
+  private isMongoReady = false;
+  private readonly databaseName = process.env.MONGO_DATABASE_NAME;
+
+  constructor(
+    private readonly adapter: UserDomainAdapter,
+    private readonly bddService = new BddRouteService()
+  ) {}
+
+  async updateInfo(payload: services.IUpdateUserInfoRequest): Promise<interfaces.IUser> {
+    await this.ensureMongoConnection();
+    const user = await this.getOrCreateUser(payload.userId);
 
     if (payload.email) {
       user.email = payload.email;
@@ -15,25 +24,35 @@ export class UserRouteService {
     }
 
     user.updatedAt = new Date().toISOString();
-    users.set(user.id, user);
+    await this.bddService.updateObject(this.adapter.toUpdateUserRequest(user.id, user));
 
     return user;
   }
 
-  addFavoriteCities(payload: services.IAddUserFavoriteCitiesRequest): interfaces.IUser {
-    const user = this.getOrCreateUser(payload.userId);
+  async addFavoriteCities(payload: services.IAddUserFavoriteCitiesRequest): Promise<interfaces.IUser> {
+    await this.ensureMongoConnection();
+    const user = await this.getOrCreateUser(payload.userId);
     const normalizedCities = payload.cities.map((city) => city.trim()).filter(Boolean);
     const currentCities = user.favoriteCities ?? [];
 
     user.favoriteCities = Array.from(new Set([...currentCities, ...normalizedCities]));
     user.updatedAt = new Date().toISOString();
-    users.set(user.id, user);
+    await this.bddService.updateObject(this.adapter.toUpdateUserRequest(user.id, user));
 
     return user;
   }
 
-  private getOrCreateUser(userId: string): interfaces.IUser {
-    const existingUser = users.get(userId);
+  private async ensureMongoConnection(): Promise<void> {
+    if (this.isMongoReady) {
+      return;
+    }
+
+    await this.bddService.connect({ databaseName: this.databaseName });
+    this.isMongoReady = true;
+  }
+
+  private async getOrCreateUser(userId: string): Promise<interfaces.IUser> {
+    const existingUser = await this.findUserById(userId);
     if (existingUser) {
       return existingUser;
     }
@@ -48,7 +67,12 @@ export class UserRouteService {
       updatedAt: now,
     };
 
-    users.set(userId, createdUser);
+    await this.bddService.createObject(this.adapter.toCreateUserRequest(createdUser));
     return createdUser;
+  }
+
+  private async findUserById(userId: string): Promise<interfaces.IUser | null> {
+    const response = await this.bddService.searchObject(this.adapter.toSearchUserRequest(userId));
+    return this.adapter.toUserFromSearchResponse(response);
   }
 }

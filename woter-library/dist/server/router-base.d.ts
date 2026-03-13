@@ -16,6 +16,7 @@ export declare abstract class RouterBase {
     protected conflict(res: Response, message?: string, code?: ErrorCode): express.Response<any, Record<string, any>>;
     protected unprocessable(res: Response, message?: string, code?: ErrorCode): express.Response<any, Record<string, any>>;
     protected fail(res: Response, status: number, message?: string, code?: ErrorCode): express.Response<any, Record<string, any>>;
+    protected returnResp<T>(request: Promise<T>, _req: Request, res: Response): Promise<any>;
     getRouter(): express.Router;
     protected getParam(req: Request, key: string): string;
     protected getQuery(req: Request, key: string): string | import("qs").ParsedQs | (string | import("qs").ParsedQs)[] | undefined;

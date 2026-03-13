@@ -21,6 +21,29 @@ This file defines the rules to follow when creating or updating API routes for W
 ## Component Rule
 - The `component.ts` file must instantiate the other files/classes in its constructor and wire them together.
 
+## Router.ts Generation Rules (Required)
+- Every `router.ts` must expose an `isAlive` endpoint:
+  - Route declaration:
+  ```ts
+  this.router.get('/isAlive/', this.isAlive);
+  ```
+  - Handler declaration:
+  ```ts
+  public isAlive = (req: any, res: any): Promise<any> => {
+    return this.returnResp(Promise.resolve(true), req, res);
+  };
+  ```
+- All `GET` routes must follow the same direct handler style:
+  ```ts
+  this.router.get('/path', this.myGetHandler);
+  ```
+- All routes that require a request body must register `parseBody` before the handler.
+  - Example for `POST`:
+  ```ts
+  this.router.post('/invitations', this.parseBody, this.invitations);
+  ```
+  - Apply the same rule to `PUT` and `PATCH` routes with body.
+
 ## General Principles
 - Keep routes RESTful and resource-oriented.
 - Prefer plural nouns for resources: `/users`, `/products`.
