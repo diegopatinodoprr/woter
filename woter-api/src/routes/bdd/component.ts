@@ -5,8 +5,7 @@ import { BddRouteService } from "./service";
 export class BddComponent {
   public readonly router: BddRouter;
 
-  constructor() {
-    const service = new BddRouteService();
+  constructor(service = new BddRouteService()) {
     const adapter = new BddDomainAdapter();
     this.router = new BddRouter(service, adapter);
   }

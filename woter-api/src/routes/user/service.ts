@@ -3,16 +3,12 @@ import { BddRouteService } from "../bdd/service";
 import type { UserDomainAdapter } from "./domain-adapter";
 
 export class UserRouteService {
-  private isMongoReady = false;
-  private readonly databaseName = process.env.MONGO_DATABASE_NAME;
-
   constructor(
     private readonly adapter: UserDomainAdapter,
     private readonly bddService = new BddRouteService()
   ) {}
 
   async updateInfo(payload: services.IUpdateUserInfoRequest): Promise<interfaces.IUser> {
-    await this.ensureMongoConnection();
     const user = await this.getOrCreateUser(payload.userId);
 
     if (payload.email) {
@@ -30,7 +26,6 @@ export class UserRouteService {
   }
 
   async addFavoriteCities(payload: services.IAddUserFavoriteCitiesRequest): Promise<interfaces.IUser> {
-    await this.ensureMongoConnection();
     const user = await this.getOrCreateUser(payload.userId);
     const normalizedCities = payload.cities.map((city) => city.trim()).filter(Boolean);
     const currentCities = user.favoriteCities ?? [];
@@ -40,15 +35,6 @@ export class UserRouteService {
     await this.bddService.updateObject(this.adapter.toUpdateUserRequest(user.id, user));
 
     return user;
-  }
-
-  private async ensureMongoConnection(): Promise<void> {
-    if (this.isMongoReady) {
-      return;
-    }
-
-    await this.bddService.connect({ databaseName: this.databaseName });
-    this.isMongoReady = true;
   }
 
   private async getOrCreateUser(userId: string): Promise<interfaces.IUser> {

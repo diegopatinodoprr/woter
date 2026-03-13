@@ -4,7 +4,7 @@ import {
 } from "@diegopatinodoprr/woter-library";
 import { MongoClient } from "mongodb";
 
-class MongoDatabaseService implements interfaces.IMongoDatabaseServiceContract {
+export class MongoDatabaseService implements interfaces.IMongoDatabaseServiceContract {
   private readonly configService = new services.MongoConfigService();
   private client: MongoClient | null = null;
   private currentConfig: interfaces.IMongoConnectionConfig | null = null;
@@ -169,7 +169,7 @@ class MongoDatabaseService implements interfaces.IMongoDatabaseServiceContract {
 }
 
 export class BddRouteService {
-  private readonly databaseService = new MongoDatabaseService();
+  constructor(private readonly databaseService = new MongoDatabaseService()) {}
   private readonly configService = new services.MongoConfigService();
 
   public async connect(request: services.IBddConnectRequest): Promise<services.IBddConnectResponse> {

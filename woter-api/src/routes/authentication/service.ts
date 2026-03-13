@@ -8,17 +8,12 @@ const ACCESS_TOKEN_TTL_SECONDS = 60 * 60; // 1h
 const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 30; // 30d
 
 export class AuthenticationService {
-  private isMongoReady = false;
-  private readonly databaseName = process.env.MONGO_DATABASE_NAME;
-
   constructor(
     private readonly adapter: AuthenticationDomainAdapter,
     private readonly bddService = new BddRouteService()
   ) {}
 
   async login(email: string, password: string) {
-    await this.ensureMongoConnection();
-
     const response = await this.bddService.searchObject(this.adapter.toSearchAuthUserByEmailRequest(email));
     const authUser = this.adapter.toAuthUserFromSearchResponse(response);
 
@@ -35,8 +30,6 @@ export class AuthenticationService {
   }
 
   async register(email: string, password: string, name?: string) {
-    await this.ensureMongoConnection();
-
     const existingResponse = await this.bddService.searchObject(
       this.adapter.toSearchAuthUserByEmailRequest(email)
     );
@@ -61,15 +54,6 @@ export class AuthenticationService {
   async refresh(_refreshToken: string) {
     // TODO: verify refresh token + rotate
     return { id: "user_1", email: "user@example.com", role: "user" as const };
-  }
-
-  private async ensureMongoConnection(): Promise<void> {
-    if (this.isMongoReady) {
-      return;
-    }
-
-    await this.bddService.connect({ databaseName: this.databaseName });
-    this.isMongoReady = true;
   }
 
   issueTokens(user: { id: string; email: string; role: "user" | "admin" }) {
