@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { RouterBase } from "woter-library";
+import { RouterBase } from "@diegopatinodoprr/woter-library";
 import type { AuthenticationService } from "./service";
 import type { AuthenticationDomainAdapter } from "./domain-adapter";
 import { validateLogin, validateRefresh, validateRegister } from "./validator";

@@ -4,7 +4,7 @@ import type {
   IUpdateUserInfoRequest,
   IUpdateUserInfoResponse,
   IUser,
-} from 'woter-library';
+} from '@diegopatinodoprr/woter-library';
 
 export class UserDomainAdapter {
   toUpdateInfoRequest(body: unknown): IUpdateUserInfoRequest {

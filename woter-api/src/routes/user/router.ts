@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { RouterBase } from "woter-library";
+import { RouterBase } from "@diegopatinodoprr/woter-library";
 import type { UserDomainAdapter } from "./domain-adapter";
 import type { UserRouteService } from "./service";
 import { validateAddFavoriteCities, validateUpdateInfo } from "./validator";

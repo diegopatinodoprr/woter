@@ -12,11 +12,17 @@ export class HomeMapComponent implements AfterViewInit, OnDestroy {
   private readonly mapContainerRef!: ElementRef<HTMLDivElement>;
 
   private mapInstance: L.Map | null = null;
+  private userMarker: L.Marker | null = null;
+  private userAccuracyCircle: L.Circle | null = null;
+
+  protected isRequestingLocation = false;
+  protected canRequestLocation = true;
+  protected locationMessage = 'Autorisez la geolocalisation pour centrer la carte sur votre position.';
 
   ngAfterViewInit(): void {
     this.mapInstance = L.map(this.mapContainerRef.nativeElement, {
       center: [48.8566, 2.3522],
-      zoom: 11,
+      zoom: 13,
       zoomControl: true
     });
 
@@ -27,11 +33,116 @@ export class HomeMapComponent implements AfterViewInit, OnDestroy {
 
     L.marker([48.8566, 2.3522]).addTo(this.mapInstance).bindPopup('Woter - Paris');
 
+    this.initLocationModule();
     setTimeout(() => this.mapInstance?.invalidateSize(), 0);
   }
 
   ngOnDestroy(): void {
     this.mapInstance?.remove();
     this.mapInstance = null;
+    this.userMarker = null;
+    this.userAccuracyCircle = null;
+  }
+
+  protected requestUserLocation(): void {
+    if (!navigator.geolocation || !this.mapInstance) {
+      this.canRequestLocation = false;
+      this.locationMessage = 'La geolocalisation n est pas disponible sur cet appareil.';
+      return;
+    }
+
+    this.isRequestingLocation = true;
+    this.locationMessage = 'Demande d autorisation de geolocalisation...';
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.isRequestingLocation = false;
+        this.canRequestLocation = true;
+        this.locationMessage = 'Position detectee. Carte centree sur votre emplacement.';
+        this.centerMapOnPosition(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
+      },
+      (error) => {
+        this.isRequestingLocation = false;
+        this.handleLocationError(error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 0
+      }
+    );
+  }
+
+  private initLocationModule(): void {
+    if (!navigator.geolocation) {
+      this.canRequestLocation = false;
+      this.locationMessage = 'La geolocalisation n est pas supportee par ce navigateur.';
+      return;
+    }
+
+    if (!navigator.permissions?.query) {
+      return;
+    }
+
+    navigator.permissions
+      .query({ name: 'geolocation' })
+      .then((permissionStatus) => {
+        if (permissionStatus.state === 'granted') {
+          this.requestUserLocation();
+        } else if (permissionStatus.state === 'denied') {
+          this.canRequestLocation = false;
+          this.locationMessage = 'Geolocalisation refusee. Activez-la dans les reglages du navigateur.';
+        }
+      })
+      .catch(() => {
+        // Ignore permissions API failures and keep manual geolocation request available.
+      });
+  }
+
+  private centerMapOnPosition(latitude: number, longitude: number, accuracy: number): void {
+    if (!this.mapInstance) {
+      return;
+    }
+
+    const userLatLng = L.latLng(latitude, longitude);
+    this.mapInstance.setView(userLatLng, 17, { animate: true });
+
+    if (!this.userMarker) {
+      this.userMarker = L.marker(userLatLng).addTo(this.mapInstance).bindPopup('Vous etes ici');
+    } else {
+      this.userMarker.setLatLng(userLatLng);
+    }
+
+    if (!this.userAccuracyCircle) {
+      this.userAccuracyCircle = L.circle(userLatLng, {
+        radius: accuracy,
+        color: '#0d6d8d',
+        fillColor: '#27a4c4',
+        fillOpacity: 0.2,
+        weight: 1
+      }).addTo(this.mapInstance);
+    } else {
+      this.userAccuracyCircle.setLatLng(userLatLng);
+      this.userAccuracyCircle.setRadius(accuracy);
+    }
+  }
+
+  private handleLocationError(error: GeolocationPositionError): void {
+    this.canRequestLocation = true;
+
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        this.locationMessage = 'Geolocalisation refusee. Autorisez-la pour centrer la carte.';
+        break;
+      case error.POSITION_UNAVAILABLE:
+        this.locationMessage = 'Position indisponible. Verifiez votre signal GPS et reessayez.';
+        break;
+      case error.TIMEOUT:
+        this.locationMessage = 'Delai depasse. Reessayez pour obtenir votre position.';
+        break;
+      default:
+        this.locationMessage = 'Impossible de recuperer votre position pour le moment.';
+        break;
+    }
   }
 }

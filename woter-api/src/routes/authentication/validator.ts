@@ -2,7 +2,7 @@ import type {
   IAuthLoginRequest,
   IAuthRegisterRequest,
   IAuthRefreshRequest,
-} from 'woter-library';
+} from '@diegopatinodoprr/woter-library';
 
 export function validateLogin(body: IAuthLoginRequest) {
   if (!body?.email || !body?.password) {

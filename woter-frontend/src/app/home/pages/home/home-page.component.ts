@@ -23,6 +23,19 @@ export class HomePageComponent {
     }
   }
 
+  protected getQuickActionIcon(action: string): string {
+    switch (action) {
+      case 'Connexion':
+        return '👤';
+      case 'Inscription':
+        return '🧭';
+      case 'Aide':
+        return '💧';
+      default:
+        return '•';
+    }
+  }
+
   protected openLoginModal(): void {
     this.showLoginModal = true;
     this.loginError = '';

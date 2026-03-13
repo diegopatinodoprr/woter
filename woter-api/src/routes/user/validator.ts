@@ -1,4 +1,4 @@
-import type { IAddUserFavoriteCitiesRequest, IUpdateUserInfoRequest } from 'woter-library';
+import type { IAddUserFavoriteCitiesRequest, IUpdateUserInfoRequest } from '@diegopatinodoprr/woter-library';
 
 export function validateUpdateInfo(body: IUpdateUserInfoRequest) {
   if (!body?.userId) {

@@ -6,7 +6,7 @@ import type {
   IAuthRefreshRequest,
   IAuthRefreshResponse,
   IAuthTokens,
-} from 'woter-library';
+} from '@diegopatinodoprr/woter-library';
 
 export class AuthenticationDomainAdapter {
   toLoginRequest(body: unknown): IAuthLoginRequest {

@@ -1,4 +1,4 @@
-import type { IAddUserFavoriteCitiesRequest, IUpdateUserInfoRequest, IUser } from 'woter-library';
+import type { IAddUserFavoriteCitiesRequest, IUpdateUserInfoRequest, IUser } from '@diegopatinodoprr/woter-library';
 
 const users = new Map<string, IUser>();
 

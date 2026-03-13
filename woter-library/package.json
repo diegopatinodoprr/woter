@@ -17,7 +17,8 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -p tsconfig.json -w",
     "prepublishOnly": "npm run build",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "lint": "tsc -p tsconfig.json --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -34,8 +35,9 @@
     "registry": "https://npm.pkg.github.com"
   },
   "devDependencies": {
-    "typescript": "^5.6.3",
     "@types/express": "^4.17.21",
-    "@types/node": "^22.10.1"
+    "@types/node": "^22.10.1",
+    "prettier-eslint": "^16.4.2",
+    "typescript": "^5.6.3"
   }
 }
