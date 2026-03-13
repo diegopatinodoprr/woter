@@ -46,3 +46,15 @@ coverage/
 .tmp/
 .npmrc
 woter-library/*.tgz
+woter-api/dist/server.js
+woter-api/dist/middlewares/auth.js
+woter-api/dist/routes/authentication/component.js
+woter-api/dist/routes/authentication/domain-adapter.js
+woter-api/dist/routes/authentication/router.js
+woter-api/dist/routes/authentication/service.js
+woter-api/dist/routes/authentication/validator.js
+woter-api/dist/routes/user/component.js
+woter-api/dist/routes/user/domain-adapter.js
+woter-api/dist/routes/user/router.js
+woter-api/dist/routes/user/service.js
+woter-api/dist/routes/user/validator.js
