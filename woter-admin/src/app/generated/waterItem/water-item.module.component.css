@@ -1,0 +1,97 @@
+.schema-module {
+  display: grid;
+  grid-template-columns: 20rem 1fr;
+  gap: 1rem;
+  min-height: 32rem;
+}
+
+.module-list,
+.module-editor {
+  border: 1px solid rgba(16, 47, 82, 0.15);
+  border-radius: 0.8rem;
+  background: #ffffff;
+  padding: 0.85rem;
+}
+
+.module-list h3,
+.module-editor h3 {
+  margin: 0;
+  color: #10365e;
+}
+
+.module-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.list-item {
+  width: 100%;
+  border: 1px solid rgba(16, 47, 82, 0.15);
+  border-radius: 0.65rem;
+  background: #f8fbff;
+  padding: 0.55rem;
+  text-align: left;
+  margin-bottom: 0.45rem;
+  cursor: pointer;
+}
+
+.list-item.selected {
+  border-color: #1d5f95;
+  background: #e8f3ff;
+}
+
+.list-item small {
+  display: block;
+  color: #597b9b;
+  margin-top: 0.2rem;
+}
+
+.editor-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.form-field label {
+  font-weight: 600;
+  color: #244766;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  border: 1px solid rgba(16, 47, 82, 0.2);
+  border-radius: 0.45rem;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+}
+
+.form-field textarea {
+  min-height: 6rem;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.error {
+  margin: 0;
+  color: #a8212f;
+}
+
+.success {
+  margin: 0;
+  color: #1f7a38;
+}
+
+@media (max-width: 1024px) {
+  .schema-module {
+    grid-template-columns: 1fr;
+  }
+}

@@ -7,3 +7,5 @@ export type {
   IMongoFindOptions,
 } from './mongo.js';
 export type { IUser } from './user.js';
+export type { MongoObjectId } from './generated/index.js';
+export * from './generated/index.js';

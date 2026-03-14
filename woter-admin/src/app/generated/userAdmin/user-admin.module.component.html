@@ -1,0 +1,76 @@
+<section class="schema-module">
+  <div class="module-list">
+    <div class="module-list-header">
+      <h3>UserAdmin List</h3>
+      <p-button type="button" label="Nouveau" icon="pi pi-plus" (onClick)="createNew()"></p-button>
+    </div>
+
+    <p *ngIf="isLoading">Chargement...</p>
+    <p *ngIf="!isLoading && items.length === 0">Aucun element.</p>
+
+    <button
+      *ngFor="let item of items"
+      type="button"
+      class="list-item"
+      [class.selected]="selectedItem === item"
+      (click)="selectItem(item)"
+    >
+      <span>{{ getItemName(item) }}</span>
+      <small>{{ getItemId(item) }}</small>
+    </button>
+  </div>
+
+  <div class="module-editor">
+    <h3>UserAdmin Editor</h3>
+
+    <p *ngIf="!selectedItem && !isCreating">Selectionne un element dans la liste.</p>
+
+    <form *ngIf="selectedItem || isCreating" [formGroup]="form" (ngSubmit)="save()" class="editor-form">
+<div class="form-field">
+  <label for="email">Email</label>
+  <input id="email" type="text" formControlName="email"  />
+</div>
+
+
+<div class="form-field">
+  <label for="role">Role</label>
+  <select id="role" formControlName="role" >
+    <option value="">-- select --</option>
+
+    <option value="admin">admin</option>
+
+  </select>
+</div>
+
+
+<div class="form-field">
+  <label for="name">Name</label>
+  <input id="name" type="text" formControlName="name"  />
+</div>
+
+
+<div class="form-field">
+  <label for="createdAt">Created At</label>
+  <input id="createdAt" type="datetime-local" formControlName="createdAt" readonly />
+</div>
+
+
+<div class="form-field">
+  <label for="updatedAt">Updated At</label>
+  <input id="updatedAt" type="datetime-local" formControlName="updatedAt" readonly />
+</div>
+
+
+<div class="form-field">
+  <label for="lastConnectionDate">Last Connection Date</label>
+  <input id="lastConnectionDate" type="datetime-local" formControlName="lastConnectionDate"  />
+</div>
+
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+      <p-button type="submit" label="Save" [loading]="isSaving" [disabled]="isSaving"></p-button>
+    </form>
+  </div>
+</section>

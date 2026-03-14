@@ -1,0 +1,124 @@
+[
+  {
+    "_id": {
+      "$oid": "69b49703e06f4c6f3fff8ce1"
+    },
+    "name": "UserAdmin",
+    "collectionName": "useradmins",
+    "schemaVersion": {
+      "$numberInt": "1"
+    },
+    "schema": {
+      "_id": {
+        "type": "objectId"
+      },
+      "email": {
+        "type": "string"
+      },
+      "role": {
+        "type": "enum",
+        "values": [
+          "admin"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "createdAt": {
+        "type": "date"
+      },
+      "updatedAt": {
+        "type": "date"
+      },
+      "lastConnectionDate": {
+        "type": "date",
+        "optional": true
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "69b49703e06f4c6f3fff8ce2"
+    },
+    "name": "UserClient",
+    "collectionName": "userclients",
+    "schemaVersion": {
+      "$numberInt": "2"
+    },
+    "schema": {
+      "_id": {
+        "type": "objectId"
+      },
+      "email": {
+        "type": "string"
+      },
+      "role": {
+        "type": "enum",
+        "values": [
+          "client",
+          "admin"
+        ]
+      },
+      "name": {
+        "type": "string",
+        "optional": true
+      },
+      "preferredWaterPoints": {
+        "type": "array",
+        "items": {
+          "type": "objectId"
+        },
+        "optional": true
+      },
+      "createdAt": {
+        "type": "date"
+      },
+      "updatedAt": {
+        "type": "date"
+      },
+      "lastConnectionDate": {
+        "type": "date",
+        "optional": true
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "69b499a347ebe707bbede34a"
+    },
+    "name": "WaterItem",
+    "collectionName": "wateritems",
+    "schemaVersion": {
+      "$numberInt": "1"
+    },
+    "schema": {
+      "_id": {
+        "type": "objectId"
+      },
+      "address": {
+        "type": "string"
+      },
+      "gps": {
+        "type": "object",
+        "fields": {
+          "lat": {
+            "type": "number"
+          },
+          "lng": {
+            "type": "number"
+          }
+        }
+      },
+      "icon": {
+        "type": "string",
+        "optional": true
+      },
+      "createdAt": {
+        "type": "date"
+      },
+      "updatedAt": {
+        "type": "date"
+      }
+    }
+  }
+]

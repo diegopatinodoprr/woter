@@ -1,6 +1,6 @@
 {
   "name": "@diegopatinodoprr/woter-library",
-  "version": "0.1.8",
+  "version": "0.1.11",
   "description": "Shared interfaces and services for Woter platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,13 @@
     "dev": "tsc -p tsconfig.json -w",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "schemas:export": "node --env-file=.env scripts/export-woter-schemas.js",
+    "schemas:push": "node --env-file=.env scripts/push-woter-schemas.js",
+    "schemas:generate": "node scripts/generate-interfaces-from-schemas.js",
+    "schemas:generate:seed": "SCHEMAS_INPUT_PATH=schemas/woterSchemas.seed.json node scripts/generate-interfaces-from-schemas.js",
+    "schemas:sync": "npm run schemas:export && npm run schemas:generate",
+    "schemas:apply": "npm run schemas:generate:seed && npm run schemas:push && npm run schemas:export && npm run schemas:generate"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +43,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^22.10.1",
+    "mongodb": "^7.1.0",
     "prettier-eslint": "^16.4.2",
     "typescript": "^5.6.3"
   }

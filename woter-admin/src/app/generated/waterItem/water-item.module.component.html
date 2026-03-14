@@ -1,0 +1,65 @@
+<section class="schema-module">
+  <div class="module-list">
+    <div class="module-list-header">
+      <h3>WaterItem List</h3>
+      <p-button type="button" label="Nouveau" icon="pi pi-plus" (onClick)="createNew()"></p-button>
+    </div>
+
+    <p *ngIf="isLoading">Chargement...</p>
+    <p *ngIf="!isLoading && items.length === 0">Aucun element.</p>
+
+    <button
+      *ngFor="let item of items"
+      type="button"
+      class="list-item"
+      [class.selected]="selectedItem === item"
+      (click)="selectItem(item)"
+    >
+      <span>{{ getItemName(item) }}</span>
+      <small>{{ getItemId(item) }}</small>
+    </button>
+  </div>
+
+  <div class="module-editor">
+    <h3>WaterItem Editor</h3>
+
+    <p *ngIf="!selectedItem && !isCreating">Selectionne un element dans la liste.</p>
+
+    <form *ngIf="selectedItem || isCreating" [formGroup]="form" (ngSubmit)="save()" class="editor-form">
+<div class="form-field">
+  <label for="address">Address</label>
+  <input id="address" type="text" formControlName="address"  />
+</div>
+
+
+<div class="form-field">
+  <label for="gps">Gps (JSON)</label>
+  <textarea id="gps" formControlName="gps" ></textarea>
+</div>
+
+
+<div class="form-field">
+  <label for="icon">Icon</label>
+  <input id="icon" type="text" formControlName="icon"  />
+</div>
+
+
+<div class="form-field">
+  <label for="createdAt">Created At</label>
+  <input id="createdAt" type="datetime-local" formControlName="createdAt" readonly />
+</div>
+
+
+<div class="form-field">
+  <label for="updatedAt">Updated At</label>
+  <input id="updatedAt" type="datetime-local" formControlName="updatedAt" readonly />
+</div>
+
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+      <p-button type="submit" label="Save" [loading]="isSaving" [disabled]="isSaving"></p-button>
+    </form>
+  </div>
+</section>

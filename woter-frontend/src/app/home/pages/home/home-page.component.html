@@ -27,20 +27,6 @@
     </div>
   </header>
 
-  <section class="zone-cards">
-    @for (zone of waterZones; track zone.label) {
-      <p-card>
-        <ng-template pTemplate="title">{{ zone.label }}</ng-template>
-        <ng-template pTemplate="subtitle">{{ zone.city }}</ng-template>
-        <div class="zone-status">
-          <p-tag [severity]="getStatusSeverity(zone.status)" [value]="zone.status"></p-tag>
-          <strong>{{ zone.quality }}%</strong>
-        </div>
-        <p-progressBar [value]="zone.quality"></p-progressBar>
-      </p-card>
-    }
-  </section>
-
   <main class="map-area">
     <app-home-map></app-home-map>
   </main>

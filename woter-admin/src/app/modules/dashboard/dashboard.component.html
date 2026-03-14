@@ -1,0 +1,58 @@
+<main class="dashboard-page">
+  <aside class="sidebar">
+    <h2>Woter Admin</h2>
+    <section class="sidebar-profile">
+      <img [src]="logoPath" alt="Woter Logo" class="sidebar-logo" />
+      <div class="sidebar-user">
+        <strong>Bienvenue {{ connectedUserName }}</strong>
+      </div>
+    </section>
+    <p-divider />
+    <nav>
+      <a
+        *ngFor="let module of modules"
+        class="nav-item"
+        [class.active]="isActiveModule(module.key)"
+        [routerLink]="['/dashboard']"
+        [queryParams]="{ module: module.key }"
+      >
+        {{ module.label }}
+      </a>
+    </nav>
+
+    <p-button
+      label="Logout"
+      icon="pi pi-sign-out"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="logout()"
+    ></p-button>
+  </aside>
+
+  <section class="workspace">
+    <header class="topbar">
+      <span class="p-input-icon-left search-wrap">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" placeholder="Rechercher..." />
+      </span>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a [routerLink]="['/dashboard']">Dashboard</a>
+        <ng-container *ngIf="hasSelectedModule()">
+          <span class="sep">/</span>
+          <a [routerLink]="['/dashboard']" [queryParams]="{ module: selectedModuleKey }">
+            {{ getSelectedModuleLabel() }}
+          </a>
+        </ng-container>
+      </nav>
+    </header>
+
+    <section class="content">
+      <ng-container *ngIf="selectedComponent; else globalView">
+        <ng-container *ngComponentOutlet="selectedComponent"></ng-container>
+      </ng-container>
+      <ng-template #globalView>
+        <app-global-view></app-global-view>
+      </ng-template>
+    </section>
+  </section>
+</main>

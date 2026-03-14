@@ -1,0 +1,9 @@
+<div class="form-field">
+  <label for="<%= field.key %>"><%= field.label %></label>
+  <select id="<%= field.key %>" formControlName="<%= field.key %>" <%= field.readonly ? 'disabled' : '' %>>
+    <option value="">-- select --</option>
+<% for (const option of field.enumValues || []) { %>
+    <option value="<%= option %>"><%= option %></option>
+<% } %>
+  </select>
+</div>

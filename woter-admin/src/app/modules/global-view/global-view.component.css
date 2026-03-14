@@ -1,0 +1,17 @@
+.global-view {
+  min-height: 18rem;
+  border: 1px dashed rgba(12, 44, 83, 0.35);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1rem;
+}
+
+.global-view h2 {
+  margin: 0 0 0.5rem;
+  color: #0c2c53;
+}
+
+.global-view p {
+  margin: 0;
+  color: #2f4f70;
+}

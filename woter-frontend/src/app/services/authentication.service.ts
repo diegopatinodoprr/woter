@@ -6,6 +6,7 @@ import type {
   IAuthRegisterRequest,
   IAuthRegisterResponse
 } from '@diegopatinodoprr/woter-library';
+import { environment } from '../../environments/environment';
 
 interface IApiResponse<T> {
   data: T;
@@ -19,7 +20,7 @@ export class AuthenticationApiService {
   private readonly accessTokenStorageKey = 'woter_access_token';
   private readonly refreshTokenStorageKey = 'woter_refresh_token';
 
-  constructor(private readonly baseUrl = '/api/v1/authentication') {}
+  constructor(private readonly baseUrl = `${environment.apiUrl}/api/v1/authentication`) {}
 
   async login(payload: IAuthLoginRequest): Promise<IAuthLoginResponse> {
     const response = await fetch(this.getEndpointUrl('login'), {

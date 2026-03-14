@@ -1,0 +1,37 @@
+<section class="schema-module">
+  <div class="module-list">
+    <div class="module-list-header">
+      <h3><%= schemaName %> List</h3>
+      <p-button type="button" label="Nouveau" icon="pi pi-plus" (onClick)="createNew()"></p-button>
+    </div>
+
+    <p *ngIf="isLoading">Chargement...</p>
+    <p *ngIf="!isLoading && items.length === 0">Aucun element.</p>
+
+    <button
+      *ngFor="let item of items"
+      type="button"
+      class="list-item"
+      [class.selected]="selectedItem === item"
+      (click)="selectItem(item)"
+    >
+      <span>{{ getItemName(item) }}</span>
+      <small>{{ getItemId(item) }}</small>
+    </button>
+  </div>
+
+  <div class="module-editor">
+    <h3><%= schemaName %> Editor</h3>
+
+    <p *ngIf="!selectedItem && !isCreating">Selectionne un element dans la liste.</p>
+
+    <form *ngIf="selectedItem || isCreating" [formGroup]="form" (ngSubmit)="save()" class="editor-form">
+<%- fieldBlocks %>
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+      <p-button type="submit" label="Save" [loading]="isSaving" [disabled]="isSaving"></p-button>
+    </form>
+  </div>
+</section>

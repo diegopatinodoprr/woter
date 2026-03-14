@@ -4,13 +4,14 @@ import type {
   IUpdateUserInfoRequest,
   IUpdateUserInfoResponse,
 } from '@diegopatinodoprr/woter-library';
+import { environment } from '../../environments/environment';
 
 interface ApiResponse<T> {
   data: T;
 }
 
 export class UserApiService {
-  constructor(private readonly baseUrl = '/api/v1/user') {}
+  constructor(private readonly baseUrl = `${environment.apiUrl}/api/v1/user`) {}
 
   async updateInfo(payload: IUpdateUserInfoRequest): Promise<IUpdateUserInfoResponse> {
     const response = await fetch(`${this.baseUrl}/info`, {
