@@ -1,39 +1,36 @@
-import { CommonModule, NgComponentOutlet } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DividerModule } from 'primeng/divider';
-import type { Type } from '@angular/core';
 import { GENERATED_MODULES } from '../../generated/registry';
 import { AuthApiService } from '../../services/auth.service';
-import { GlobalViewComponent } from '../global-view/global-view.component';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterLink, NgComponentOutlet, DividerModule, ButtonModule, InputTextModule, GlobalViewComponent],
+  imports: [CommonModule, RouterLink, RouterOutlet, DividerModule, ButtonModule, InputTextModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
   protected readonly modules = GENERATED_MODULES;
   protected selectedModuleKey = '';
-  protected selectedComponent: Type<unknown> | null = null;
+  protected currentAction: 'list' | 'new' | 'edit' = 'list';
+  protected currentEditId = '';
   protected readonly logoPath = 'assets/images/water.png';
   protected readonly connectedUserName: string;
   private readonly authService = new AuthApiService();
 
   constructor(
-    private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly router: Router
   ) {
     this.connectedUserName = this.authService.getConnectedUserName();
-    this.route.queryParamMap.subscribe((params) => {
-      const requested = params.get('module');
-      const selected = requested ? this.modules.find((item) => item.key === requested) : undefined;
-      this.selectedModuleKey = selected?.key ?? '';
-      this.selectedComponent = selected?.component ?? null;
-    });
+    this.updateFromUrl(this.router.url);
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => this.updateFromUrl(this.router.url));
   }
 
   protected isActiveModule(key: string): boolean {
@@ -47,6 +44,50 @@ export class DashboardComponent {
 
   protected hasSelectedModule(): boolean {
     return this.selectedModuleKey.length > 0;
+  }
+
+  protected hasActionCrumb(): boolean {
+    return this.currentAction === 'new' || this.currentAction === 'edit';
+  }
+
+  protected getActionLabel(): string {
+    if (this.currentAction === 'new') {
+      return 'New';
+    }
+    if (this.currentAction === 'edit') {
+      return this.currentEditId ? `Edit (${this.currentEditId})` : 'Edit';
+    }
+    return '';
+  }
+
+  private updateFromUrl(url: string): void {
+    const [path] = url.split('?');
+    const segments = path.split('/').filter(Boolean);
+    const dashboardIndex = segments.findIndex((segment) => segment === 'dashboard');
+    const moduleKey = dashboardIndex >= 0 ? segments[dashboardIndex + 1] ?? '' : '';
+    const action = dashboardIndex >= 0 ? segments[dashboardIndex + 2] ?? '' : '';
+    const editId = dashboardIndex >= 0 ? segments[dashboardIndex + 3] ?? '' : '';
+
+    const hasModule = this.modules.some((item) => item.key === moduleKey);
+    this.selectedModuleKey = hasModule ? moduleKey : '';
+    this.currentEditId = this.selectedModuleKey ? editId : '';
+
+    if (!this.selectedModuleKey) {
+      this.currentAction = 'list';
+      return;
+    }
+
+    if (action === 'new') {
+      this.currentAction = 'new';
+      return;
+    }
+
+    if (action === 'edit') {
+      this.currentAction = 'edit';
+      return;
+    }
+
+    this.currentAction = 'list';
   }
 
   protected logout(): void {

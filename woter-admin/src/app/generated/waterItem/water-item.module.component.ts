@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
+import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BddAdminService } from '../../services/bdd-admin.service';
+import { WaterItemListviewComponent } from './listview/water-item-listview.component';
+import { WaterItemFormeditComponent } from './formedit/water-item-formedit.component';
+import { WaterItemFormnewComponent } from './formnew/water-item-formnew.component';
 
 type Item = Record<string, unknown>;
 
@@ -18,14 +21,15 @@ interface FieldConfig {
 
 @Component({
   selector: 'app-water-item-module',
-  imports: [CommonModule, ReactiveFormsModule, ButtonModule],
+  imports: [CommonModule, WaterItemListviewComponent, WaterItemFormeditComponent, WaterItemFormnewComponent],
   templateUrl: './water-item.module.component.html',
   styleUrl: './water-item.module.component.css'
 })
 export class WaterItemModuleComponent implements OnInit {
+  protected readonly moduleKey = 'waterItem';
   protected items: Item[] = [];
   protected selectedItem: Item | null = null;
-  protected isCreating = false;
+  protected mode: 'list' | 'edit' | 'new' = 'list';
   protected isLoading = false;
   protected isSaving = false;
   protected errorMessage = '';
@@ -74,7 +78,9 @@ export class WaterItemModuleComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly bddService: BddAdminService
+    private readonly bddService: BddAdminService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {
     this.form = this.fb.group({
     address: [''],
@@ -87,7 +93,14 @@ export class WaterItemModuleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    void this.loadItems();
+    this.route.url.subscribe(() => {
+      const mode = this.route.snapshot.data['mode'] as 'list' | 'new' | 'edit' | undefined;
+      this.mode = mode ?? 'list';
+      const editId = this.route.snapshot.paramMap.get('id');
+      this.errorMessage = '';
+      this.successMessage = '';
+      void this.loadItems(editId);
+    });
   }
 
   protected getItemName(item: Item): string {
@@ -113,32 +126,37 @@ export class WaterItemModuleComponent implements OnInit {
     return '';
   }
 
-  protected selectItem(item: Item): void {
-    this.isCreating = false;
-    this.selectedItem = item;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    const patch: Record<string, unknown> = {};
-    for (const field of this.fields) {
-      patch[field.key] = this.toFormValue(field, item[field.key]);
+  protected openEdit(item: Item): void {
+    const itemId = this.getItemId(item);
+    if (!itemId) {
+      this.errorMessage = 'Impossible d ouvrir cet element';
+      return;
     }
-
-    this.form.patchValue(patch);
-    this.applyReadonlyState();
+    void this.router.navigate(['/dashboard', this.moduleKey, 'edit', itemId]);
   }
 
-  protected createNew(): void {
-    this.isCreating = true;
-    this.selectedItem = null;
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.form.reset();
-    this.applyReadonlyState();
+  protected openNew(): void {
+    void this.router.navigate(['/dashboard', this.moduleKey, 'new']);
+  }
+
+  protected goToList(): void {
+    void this.router.navigate(['/dashboard', this.moduleKey, 'list']);
+  }
+
+  protected isListMode(): boolean {
+    return this.mode === 'list';
+  }
+
+  protected isEditMode(): boolean {
+    return this.mode === 'edit';
+  }
+
+  protected isNewMode(): boolean {
+    return this.mode === 'new';
   }
 
   protected async save(): Promise<void> {
-    if (!this.selectedItem && !this.isCreating) {
+    if (!this.isEditMode() && !this.isNewMode()) {
       return;
     }
 
@@ -163,34 +181,69 @@ export class WaterItemModuleComponent implements OnInit {
     this.isSaving = true;
 
     try {
-      if (this.isCreating) {
+      if (this.isNewMode()) {
         await this.bddService.createObject('wateritems', payload);
         this.successMessage = 'Element cree';
-        this.isCreating = false;
       } else if (this.selectedItem) {
         const filter = { _id: this.selectedItem['_id'] };
         await this.bddService.updateObject('wateritems', filter, payload);
         this.successMessage = 'Element mis a jour';
       }
-      await this.loadItems();
+      this.goToList();
     } catch {
-      this.errorMessage = this.isCreating ? 'Echec de la creation' : 'Echec de la mise a jour';
+      this.errorMessage = this.isNewMode() ? 'Echec de la creation' : 'Echec de la mise a jour';
     } finally {
       this.isSaving = false;
     }
   }
 
-  private async loadItems(): Promise<void> {
+  private async loadItems(editId: string | null): Promise<void> {
     this.isLoading = true;
     this.errorMessage = '';
 
     try {
       this.items = await this.bddService.searchObjects('wateritems');
+      if (this.mode === 'new') {
+        this.prepareNewForm();
+        return;
+      }
+
+      if (this.mode === 'edit' && editId) {
+        const item = this.items.find((candidate) => this.getItemId(candidate) === editId) ?? null;
+        if (!item) {
+          this.errorMessage = 'Element introuvable';
+          this.goToList();
+          return;
+        }
+        this.selectedItem = item;
+        this.patchFormFromItem(item);
+        return;
+      }
+
+      this.selectedItem = null;
+      this.form.reset();
+      this.applyReadonlyState();
     } catch {
       this.errorMessage = 'Impossible de charger les elements';
     } finally {
       this.isLoading = false;
     }
+  }
+
+  private patchFormFromItem(item: Item): void {
+    const patch: Record<string, unknown> = {};
+    for (const field of this.fields) {
+      patch[field.key] = this.toFormValue(field, item[field.key]);
+    }
+
+    this.form.patchValue(patch);
+    this.applyReadonlyState();
+  }
+
+  private prepareNewForm(): void {
+    this.selectedItem = null;
+    this.form.reset();
+    this.applyReadonlyState();
   }
 
   private applyReadonlyState(): void {

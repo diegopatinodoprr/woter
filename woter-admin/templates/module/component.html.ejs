@@ -1,37 +1,36 @@
 <section class="schema-module">
-  <div class="module-list">
-    <div class="module-list-header">
-      <h3><%= schemaName %> List</h3>
-      <p-button type="button" label="Nouveau" icon="pi pi-plus" (onClick)="createNew()"></p-button>
-    </div>
+  <app-<%= kebabName %>-listview
+    *ngIf="isListMode()"
+    [title]="'<%= schemaName %> List'"
+    [items]="items"
+    [isLoading]="isLoading"
+    [getItemName]="getItemName.bind(this)"
+    [getItemId]="getItemId.bind(this)"
+    (createNew)="openNew()"
+    (editItem)="openEdit($event)"
+  ></app-<%= kebabName %>-listview>
 
-    <p *ngIf="isLoading">Chargement...</p>
-    <p *ngIf="!isLoading && items.length === 0">Aucun element.</p>
+  <app-<%= kebabName %>-formedit
+    *ngIf="isEditMode()"
+    [title]="'<%= schemaName %> Edit'"
+    [form]="form"
+    [fields]="fields"
+    [errorMessage]="errorMessage"
+    [successMessage]="successMessage"
+    [isSaving]="isSaving"
+    (back)="goToList()"
+    (save)="save()"
+  ></app-<%= kebabName %>-formedit>
 
-    <button
-      *ngFor="let item of items"
-      type="button"
-      class="list-item"
-      [class.selected]="selectedItem === item"
-      (click)="selectItem(item)"
-    >
-      <span>{{ getItemName(item) }}</span>
-      <small>{{ getItemId(item) }}</small>
-    </button>
-  </div>
-
-  <div class="module-editor">
-    <h3><%= schemaName %> Editor</h3>
-
-    <p *ngIf="!selectedItem && !isCreating">Selectionne un element dans la liste.</p>
-
-    <form *ngIf="selectedItem || isCreating" [formGroup]="form" (ngSubmit)="save()" class="editor-form">
-<%- fieldBlocks %>
-
-      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
-
-      <p-button type="submit" label="Save" [loading]="isSaving" [disabled]="isSaving"></p-button>
-    </form>
-  </div>
+  <app-<%= kebabName %>-formnew
+    *ngIf="isNewMode()"
+    [title]="'<%= schemaName %> Create'"
+    [form]="form"
+    [fields]="fields"
+    [errorMessage]="errorMessage"
+    [successMessage]="successMessage"
+    [isSaving]="isSaving"
+    (back)="goToList()"
+    (save)="save()"
+  ></app-<%= kebabName %>-formnew>
 </section>

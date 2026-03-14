@@ -11,6 +11,7 @@ import {
   validateSearchObjects,
   validateUpdateObject,
   validateUpdateObjects,
+  validatePrevie,
 } from "./validator";
 
 export class BddRouter extends server.RouterBase {
@@ -21,6 +22,7 @@ export class BddRouter extends server.RouterBase {
     super();
 
     this.router.get("/isAlive/", this.isAlive);
+    this.router.get("/previe", this.jsonParser(), this.previe);
     this.router.post("/object/create", this.jsonParser(), this.createObject);
     this.router.post("/objects/create", this.jsonParser(), this.createObjects);
     this.router.post("/object/search", this.jsonParser(), this.searchObject);
@@ -50,6 +52,21 @@ export class BddRouter extends server.RouterBase {
     try {
       const response = await this.service.createObject(payload);
       return this.created(res, this.adapter.toCreateObjectResponse(response));
+    } catch {
+      return this.fail(res, 500);
+    }
+  }
+
+  public previe = async (req: Request, res: Response): Promise<Response> => {
+    const payload = this.adapter.toPrevieRequest(req.body, req.query);
+    const validationError = validatePrevie(payload);
+    if (validationError) {
+      return this.badRequest(res, validationError);
+    }
+
+    try {
+      const response = await this.service.previe(payload);
+      return this.ok(res, this.adapter.toPrevieResponse(response));
     } catch {
       return this.fail(res, 500);
     }

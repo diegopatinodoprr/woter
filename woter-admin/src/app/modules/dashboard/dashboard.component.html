@@ -13,8 +13,7 @@
         *ngFor="let module of modules"
         class="nav-item"
         [class.active]="isActiveModule(module.key)"
-        [routerLink]="['/dashboard']"
-        [queryParams]="{ module: module.key }"
+        [routerLink]="['/dashboard', module.key, 'list']"
       >
         {{ module.label }}
       </a>
@@ -39,20 +38,19 @@
         <a [routerLink]="['/dashboard']">Dashboard</a>
         <ng-container *ngIf="hasSelectedModule()">
           <span class="sep">/</span>
-          <a [routerLink]="['/dashboard']" [queryParams]="{ module: selectedModuleKey }">
+          <a [routerLink]="['/dashboard', selectedModuleKey, 'list']">
             {{ getSelectedModuleLabel() }}
           </a>
+        </ng-container>
+        <ng-container *ngIf="hasActionCrumb()">
+          <span class="sep">/</span>
+          <span>{{ getActionLabel() }}</span>
         </ng-container>
       </nav>
     </header>
 
     <section class="content">
-      <ng-container *ngIf="selectedComponent; else globalView">
-        <ng-container *ngComponentOutlet="selectedComponent"></ng-container>
-      </ng-container>
-      <ng-template #globalView>
-        <app-global-view></app-global-view>
-      </ng-template>
+      <router-outlet></router-outlet>
     </section>
   </section>
 </main>

@@ -78,3 +78,15 @@ export function validateDeleteObject(body: services.IBddDeleteObjectRequest): st
 export function validateDeleteObjects(body: services.IBddDeleteObjectsRequest): string | null {
   return validateDeleteObject(body);
 }
+
+export function validatePrevie(body: services.IBddPrevieRequest): string | null {
+  if (!Array.isArray(body?.schemaNames) || body.schemaNames.length === 0) {
+    return "schemaNames must be a non-empty array";
+  }
+
+  if (!body.schemaNames.every((schemaName) => typeof schemaName === "string" && schemaName.trim().length > 0)) {
+    return "each schemaName must be a non-empty string";
+  }
+
+  return null;
+}

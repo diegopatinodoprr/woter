@@ -37,6 +37,29 @@ export class BddDomainAdapter {
     return body as services.IBddDeleteObjectsRequest;
   }
 
+  public toPrevieRequest(body: unknown, query: unknown): services.IBddPrevieRequest {
+    const fromBody = body as Partial<services.IBddPrevieRequest> | null | undefined;
+    if (Array.isArray(fromBody?.schemaNames)) {
+      return { schemaNames: fromBody.schemaNames };
+    }
+
+    const queryObject = (query ?? {}) as Record<string, unknown>;
+    const querySchemaNames = queryObject["schemaNames"];
+    if (Array.isArray(querySchemaNames)) {
+      return { schemaNames: querySchemaNames.filter((name): name is string => typeof name === "string") };
+    }
+    if (typeof querySchemaNames === "string") {
+      return {
+        schemaNames: querySchemaNames
+          .split(",")
+          .map((name) => name.trim())
+          .filter(Boolean),
+      };
+    }
+
+    return { schemaNames: [] };
+  }
+
   public toConnectResponse(data: services.IBddConnectResponse): services.IBddConnectResponse {
     return data;
   }
@@ -86,6 +109,10 @@ export class BddDomainAdapter {
   public toDeleteObjectsResponse(
     data: services.IBddDeleteObjectsResponse
   ): services.IBddDeleteObjectsResponse {
+    return data;
+  }
+
+  public toPrevieResponse(data: services.IBddPrevieResponse): services.IBddPrevieResponse {
     return data;
   }
 }

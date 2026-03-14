@@ -1,0 +1,95 @@
+<div class="module-editor">
+  <div class="module-editor-header">
+    <h3>{{ title }}</h3>
+    <p-button
+      type="button"
+      label="Retour Liste"
+      icon="pi pi-arrow-left"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="back.emit()"
+    ></p-button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save.emit()" class="editor-form">
+    <div class="form-field" *ngFor="let field of fields">
+      <label [for]="field.key">{{ field.label }}</label>
+
+      <ng-container [ngSwitch]="field.type">
+        <input
+          *ngSwitchCase="'string'"
+          [id]="field.key"
+          type="text"
+          [formControlName]="field.key"
+        />
+
+        <input
+          *ngSwitchCase="'objectId'"
+          [id]="field.key"
+          type="text"
+          [formControlName]="field.key"
+        />
+
+        <input
+          *ngSwitchCase="'number'"
+          [id]="field.key"
+          type="number"
+          [formControlName]="field.key"
+        />
+
+        <input
+          *ngSwitchCase="'boolean'"
+          [id]="field.key"
+          type="checkbox"
+          [formControlName]="field.key"
+        />
+
+        <input
+          *ngSwitchCase="'date'"
+          [id]="field.key"
+          type="datetime-local"
+          [formControlName]="field.key"
+        />
+
+        <select
+          *ngSwitchCase="'enum'"
+          [id]="field.key"
+          [formControlName]="field.key"
+        >
+          <option value="">-- select --</option>
+          <option *ngFor="let option of field.enumValues || []" [value]="option">{{ option }}</option>
+        </select>
+
+        <textarea
+          *ngSwitchCase="'array'"
+          [id]="field.key"
+          [formControlName]="field.key"
+        ></textarea>
+
+        <textarea
+          *ngSwitchCase="'arrayOf'"
+          [id]="field.key"
+          [formControlName]="field.key"
+        ></textarea>
+
+        <textarea
+          *ngSwitchCase="'object'"
+          [id]="field.key"
+          [formControlName]="field.key"
+        ></textarea>
+
+        <input
+          *ngSwitchDefault
+          [id]="field.key"
+          type="text"
+          [formControlName]="field.key"
+        />
+      </ng-container>
+    </div>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+    <p-button type="submit" label="Create" [loading]="isSaving" [disabled]="isSaving"></p-button>
+  </form>
+</div>

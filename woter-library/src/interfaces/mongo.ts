@@ -69,4 +69,5 @@ export interface IMongoDatabaseServiceContract {
     update: IMongoDocument
   ): Promise<number>;
   deleteOne(collectionName: string, filter: IMongoDocument): Promise<number>;
+  countObjects(collectionName: string, filter?: IMongoDocument): Promise<number>;
 }

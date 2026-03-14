@@ -1,6 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, Routes } from '@angular/router';
+import { GENERATED_DASHBOARD_ROUTES } from './generated/dashboard-routes';
 import { DashboardComponent } from './modules/dashboard/dashboard.component';
+import { GlobalViewComponent } from './modules/global-view/global-view.component';
 import { LoginComponent } from './modules/login/login.component';
 import { AuthApiService } from './services/auth.service';
 
@@ -23,6 +25,14 @@ const dashboardGuard: CanActivateFn = () => {
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [dashboardGuard] },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [dashboardGuard],
+    children: [
+      { path: '', component: GlobalViewComponent },
+      ...GENERATED_DASHBOARD_ROUTES
+    ]
+  },
   { path: '**', redirectTo: 'login' }
 ];

@@ -83,3 +83,17 @@ export interface IBddDeleteObjectsRequest {
 export interface IBddDeleteObjectsResponse {
   deletedCount: number;
 }
+
+export interface IBddPrevieRequest {
+  schemaNames: string[];
+}
+
+export interface IBddPrevieCollectionInfo {
+  schemaName: string;
+  collectionName: string;
+  totalItems: number;
+}
+
+export interface IBddPrevieResponse {
+  collections: IBddPrevieCollectionInfo[];
+}

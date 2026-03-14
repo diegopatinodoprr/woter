@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import type { IBddPrevieResponse } from '@diegopatinodoprr/woter-library';
 import { environment } from '../../environments/environment';
 import { AuthApiService } from './auth.service';
 
@@ -73,6 +74,19 @@ export class BddAdminService {
 
     const body = await this.readResponse<CreateObjectResponse>(response);
     return body.insertedId ?? '';
+  }
+
+  async previe(schemaNames: string[]): Promise<IBddPrevieResponse> {
+    const params = new URLSearchParams();
+    params.set('schemaNames', schemaNames.join(','));
+
+    const response = await fetch(`${this.baseUrl}/previe?${params.toString()}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+      cache: 'no-store'
+    });
+
+    return this.readResponse<IBddPrevieResponse>(response);
   }
 
   private getHeaders(): Record<string, string> {

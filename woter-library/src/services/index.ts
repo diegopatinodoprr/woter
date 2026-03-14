@@ -21,6 +21,9 @@ export type {
   IBddDeleteObjectResponse,
   IBddDeleteObjectsRequest,
   IBddDeleteObjectsResponse,
+  IBddPrevieRequest,
+  IBddPrevieCollectionInfo,
+  IBddPrevieResponse,
 } from './bdd-service.js';
 export type {
   IAuthTokens,

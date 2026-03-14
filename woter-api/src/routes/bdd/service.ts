@@ -158,6 +158,14 @@ export class MongoDatabaseService implements interfaces.IMongoDatabaseServiceCon
     return result.deletedCount;
   }
 
+  public async countObjects(
+    collectionName: string,
+    filter: interfaces.IMongoDocument = {}
+  ): Promise<number> {
+    const collection = this.getCollection(collectionName);
+    return collection.countDocuments(filter);
+  }
+
   private getCollection(collectionName: string) {
     if (!this.client || !this.currentConfig) {
       throw new Error("MONGO_NOT_CONNECTED");
@@ -248,5 +256,50 @@ export class BddRouteService {
   ): Promise<services.IBddDeleteObjectsResponse> {
     const deletedCount = await this.databaseService.deleteObjects(request.collectionName, request.filter);
     return { deletedCount };
+  }
+
+  public async previe(
+    request: services.IBddPrevieRequest
+  ): Promise<services.IBddPrevieResponse> {
+    const uniqueSchemaNames = [...new Set(request.schemaNames.map((name) => name.trim()).filter(Boolean))];
+    if (!uniqueSchemaNames.length) {
+      return { collections: [] };
+    }
+
+    const schemaDocuments = await this.databaseService.searchObjects<interfaces.IMongoDocument>(
+      "woterSchemas",
+      { name: { $in: uniqueSchemaNames } }
+    );
+
+    const schemaByName = new Map<string, string>();
+    for (const schemaDocument of schemaDocuments) {
+      const schemaName = schemaDocument["name"];
+      const collectionName = schemaDocument["collectionName"];
+      if (typeof schemaName === "string" && typeof collectionName === "string" && collectionName.trim()) {
+        schemaByName.set(schemaName, collectionName);
+      }
+    }
+
+    const collections = await Promise.all(
+      uniqueSchemaNames.map(async (schemaName) => {
+        const collectionName = schemaByName.get(schemaName);
+        if (!collectionName) {
+          return null;
+        }
+
+        const totalItems = await this.databaseService.countObjects(collectionName, {});
+        return {
+          schemaName,
+          collectionName,
+          totalItems,
+        } as services.IBddPrevieCollectionInfo;
+      })
+    );
+
+    return {
+      collections: collections.filter(
+        (collection): collection is services.IBddPrevieCollectionInfo => collection !== null
+      ),
+    };
   }
 }

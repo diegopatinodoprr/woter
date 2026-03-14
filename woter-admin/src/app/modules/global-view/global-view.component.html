@@ -1,4 +1,14 @@
 <section class="global-view">
   <h2>Global View</h2>
-  <p>Contenu a venir.</p>
+
+  <p *ngIf="isLoading">Chargement des statistiques...</p>
+  <p *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="preview-grid" *ngIf="!isLoading && !errorMessage">
+    <article class="preview-card" *ngFor="let info of infos">
+      <h3>{{ info.schemaName }}</h3>
+      <p class="collection">{{ info.collectionName }}</p>
+      <strong>{{ info.totalItems }}</strong>
+    </article>
+  </div>
 </section>

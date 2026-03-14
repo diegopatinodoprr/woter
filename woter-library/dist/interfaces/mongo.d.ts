@@ -30,5 +30,6 @@ export interface IMongoDatabaseServiceContract {
     insertOne<TDocument extends IMongoDocument>(collectionName: string, document: TDocument): Promise<string>;
     updateOne(collectionName: string, filter: IMongoDocument, update: IMongoDocument): Promise<number>;
     deleteOne(collectionName: string, filter: IMongoDocument): Promise<number>;
+    countObjects(collectionName: string, filter?: IMongoDocument): Promise<number>;
 }
 //# sourceMappingURL=mongo.d.ts.map
