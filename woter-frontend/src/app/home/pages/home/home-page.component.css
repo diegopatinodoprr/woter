@@ -1,94 +1,146 @@
 :host {
   display: block;
-  min-height: 100vh;
-}
-
-.home-layout {
-  min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 1rem;
-  padding: clamp(0.9rem, 2vw, 1.4rem);
-  background:
-    radial-gradient(circle at 92% 0%, rgba(141, 169, 196, 0.35), transparent 32%),
-    radial-gradient(circle at 8% 10%, rgba(19, 64, 116, 0.18), transparent 28%),
-    #eef4ed;
-}
-
-.hero {
-  max-width: 70rem;
-  margin: 0 auto;
-  width: 100%;
-  padding: 1.1rem;
-  border: 1px solid rgba(19, 64, 116, 0.2);
-  border-radius: 1rem;
-  background: rgba(238, 244, 237, 0.94);
-  box-shadow: 0 10px 24px rgba(11, 37, 69, 0.12);
-}
-
-.hero h1 {
-  margin: 0.7rem 0 0.5rem;
-  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
-  letter-spacing: -0.02em;
-}
-
-.hero p {
-  margin: 0;
-  color: #13315c;
-}
-
-.search-row {
-  margin-top: 1rem;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.6rem;
-}
-
-.search-row input {
-  width: 100%;
-}
-
-.actions {
-  margin-top: 0.8rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-}
-
-
-.zone-status {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.6rem;
+  height: 100vh;
+  --home-overlay-offset: 6.2rem;
+  --home-overlay-offset-mobile: 6.7rem;
 }
 
 .map-area {
-  max-width: 70rem;
+  position: relative;
   width: 100%;
-  margin: 0 auto;
-  min-height: 0;
+  height: 100%;
 }
 
-.site-footer {
-  max-width: 70rem;
+.map-overlay-header {
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  right: 0.9rem;
+  z-index: 600;
+  --wave-x: 0px;
+  --wave-y: 0px;
+  --wave-tilt: 0;
+  display: grid;
+  grid-template-columns: minmax(14rem, 1.15fr) minmax(20rem, 1.65fr) minmax(17rem, auto);
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.55rem 0.6rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(19, 64, 116, 0.2);
+  background: linear-gradient(180deg, rgba(191, 223, 235, 0.5), rgba(238, 244, 237, 0.18));
+  box-shadow: 0 14px 30px rgba(11, 37, 69, 0.15);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(19, 64, 116, 0.2);
+  border-radius: 12px;
+  background: rgba(238, 244, 237, 0.9);
+  box-shadow: 0 8px 20px rgba(11, 37, 69, 0.14);
+  pointer-events: auto;
+}
+
+.brand-logo {
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.25vw, 1.2rem);
+  letter-spacing: -0.02em;
+  color: #0b2545;
+}
+
+.search-block {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) auto auto;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border: 1px solid rgba(19, 64, 116, 0.2);
+  border-radius: 12px;
+  background: rgba(238, 244, 237, 0.9);
+  box-shadow: 0 8px 20px rgba(11, 37, 69, 0.14);
+  pointer-events: auto;
+}
+
+.search-block input {
   width: 100%;
-  margin: 0 auto;
+}
+
+.search-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.8rem;
+  color: #b42318;
+}
+
+.actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.8rem;
-  align-items: center;
-  justify-content: center;
-  color: #13315c;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding: 0.6rem;
+  border: 1px solid rgba(19, 64, 116, 0.2);
+  border-radius: 12px;
+  background: rgba(238, 244, 237, 0.9);
+  box-shadow: 0 8px 20px rgba(11, 37, 69, 0.14);
+  pointer-events: auto;
 }
 
-.site-footer a {
-  color: inherit;
-  text-decoration: none;
+.brand,
+.search-block,
+.actions,
+.burger-toggle {
+  position: relative;
+  z-index: 2;
 }
 
-.site-footer a:hover {
-  text-decoration: underline;
+.burger-toggle {
+  display: none;
+  pointer-events: auto;
+  justify-self: end;
+}
+
+.header-wave {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: -18px;
+  height: 56px;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(30px 16px at 15px 0, rgba(107, 184, 220, 0.52) 99%, transparent 100%) repeat-x,
+    radial-gradient(36px 18px at 18px 2px, rgba(76, 154, 202, 0.5) 99%, transparent 100%) repeat-x;
+  background-size: 64px 28px, 76px 30px;
+  background-position: 0 0, 14px 16px;
+  transform: translate3d(var(--wave-x), calc(var(--wave-y) * 0.45), 0)
+    rotate(calc(var(--wave-tilt) * 1deg));
+  transition: transform 180ms ease-out;
+}
+
+.header-wave::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(34px 15px at 17px 2px, rgba(145, 210, 238, 0.52) 99%, transparent 100%) repeat-x;
+  background-size: 70px 28px;
+  background-position: 8px 9px;
+  transform: translateX(calc(var(--wave-x) * -0.35));
+  transition: transform 220ms ease-out;
+}
+
+.mobile-menu-backdrop,
+.mobile-menu {
+  display: none;
 }
 
 .login-form {
@@ -107,13 +159,82 @@
   color: #b42318;
 }
 
-@media (max-width: 640px) {
-  .home-layout {
-    padding: 0.75rem;
-    gap: 0.8rem;
+@media (max-width: 768px) {
+  :host {
+    --home-overlay-offset: var(--home-overlay-offset-mobile);
   }
 
-  .search-row {
-    grid-template-columns: 1fr;
+  .map-overlay-header {
+    top: 0.55rem;
+    left: 0.55rem;
+    right: 0.55rem;
+    grid-template-columns: 1fr auto;
+    align-items: stretch;
+    padding: 0.45rem 0.45rem 0.7rem;
+  }
+
+  .brand,
+  .actions {
+    display: none;
+  }
+
+  .search-block {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    padding: 0.5rem;
+  }
+
+  .burger-toggle {
+    display: inline-flex;
+    align-self: center;
+  }
+
+  .mobile-menu-backdrop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 700;
+    border: none;
+    background: rgba(11, 37, 69, 0.28);
+  }
+
+  .mobile-menu {
+    display: block;
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    left: 0.55rem;
+    z-index: 710;
+    padding: 0.9rem;
+    border-radius: 14px;
+    border: 1px solid rgba(19, 64, 116, 0.22);
+    background: rgba(238, 244, 237, 0.98);
+    box-shadow: 0 12px 28px rgba(11, 37, 69, 0.2);
+  }
+
+  .mobile-menu-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .mobile-menu-brand h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #0b2545;
+  }
+
+  .mobile-menu p {
+    margin: 0.55rem 0 0.75rem;
+    color: #13315c;
+    font-size: 0.9rem;
+  }
+
+  .mobile-menu-actions {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .mobile-menu-actions :is(p-button, .p-button) {
+    width: 100%;
   }
 }

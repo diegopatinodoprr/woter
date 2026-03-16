@@ -14,6 +14,7 @@ export class HomeMapComponent implements AfterViewInit, OnDestroy {
   private mapInstance: L.Map | null = null;
   private userMarker: L.Marker | null = null;
   private userAccuracyCircle: L.Circle | null = null;
+  private searchMarker: L.Marker | null = null;
 
   protected isRequestingLocation = false;
   protected canRequestLocation = true;
@@ -23,8 +24,10 @@ export class HomeMapComponent implements AfterViewInit, OnDestroy {
     this.mapInstance = L.map(this.mapContainerRef.nativeElement, {
       center: [48.8566, 2.3522],
       zoom: 13,
-      zoomControl: true
+      zoomControl: false
     });
+
+    L.control.zoom({ position: 'bottomright' }).addTo(this.mapInstance);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -42,9 +45,10 @@ export class HomeMapComponent implements AfterViewInit, OnDestroy {
     this.mapInstance = null;
     this.userMarker = null;
     this.userAccuracyCircle = null;
+    this.searchMarker = null;
   }
 
-  protected requestUserLocation(): void {
+  public requestUserLocation(): void {
     if (!navigator.geolocation || !this.mapInstance) {
       this.canRequestLocation = false;
       this.locationMessage = 'La geolocalisation n est pas disponible sur cet appareil.';
@@ -58,7 +62,7 @@ export class HomeMapComponent implements AfterViewInit, OnDestroy {
       (position) => {
         this.isRequestingLocation = false;
         this.canRequestLocation = true;
-        this.locationMessage = 'Position detectee. Carte centree sur votre emplacement.';
+
         this.centerMapOnPosition(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
       },
       (error) => {
@@ -71,6 +75,25 @@ export class HomeMapComponent implements AfterViewInit, OnDestroy {
         maximumAge: 0
       }
     );
+  }
+
+  public centerOnCoordinates(latitude: number, longitude: number, label?: string): void {
+    if (!this.mapInstance) {
+      return;
+    }
+
+    const searchLatLng = L.latLng(latitude, longitude);
+    this.mapInstance.setView(searchLatLng, 16, { animate: true });
+
+    if (!this.searchMarker) {
+      this.searchMarker = L.marker(searchLatLng).addTo(this.mapInstance);
+    } else {
+      this.searchMarker.setLatLng(searchLatLng);
+    }
+
+    const popupLabel = label ? `Resultat: ${label}` : 'Resultat de recherche';
+    this.searchMarker.bindPopup(popupLabel).openPopup();
+    this.locationMessage = 'Recherche terminee. Carte centree sur le resultat.';
   }
 
   private initLocationModule(): void {

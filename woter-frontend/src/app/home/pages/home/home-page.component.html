@@ -1,19 +1,56 @@
-<div class="home-layout">
-  <header class="hero">
-    <p-tag severity="info" value="Woter Frontend"></p-tag>
-    <h1>Trouvez une fontaine fiable près de vous</h1>
-    <p>Suivez la qualité de l'eau en temps réel et préparez vos trajets urbains ou sportifs.</p>
-
-    <div class="search-row">
+<main class="map-area">
+  <app-home-map #homeMap></app-home-map>
+  <header
+    class="map-overlay-header"
+    (mousemove)="onHeaderMouseMove($event)"
+    (mouseleave)="resetHeaderWave()"
+    [style.--wave-x.px]="headerWaveX"
+    [style.--wave-y.px]="headerWaveY"
+    [style.--wave-tilt]="headerWaveTilt"
+  >
+    <div class="brand">
+      <img src="assets/images/woter.png" alt="Logo Woter" class="brand-logo" />
+      <h1>Trouvez une fontaine fiable près de vous</h1>
+    </div>
+    <div class="search-block" aria-label="Recherche">
       <input
         pInputText
         type="search"
-        placeholder="Ville, quartier, parc ou itinéraire..."
+        placeholder="Ville, quartier, parc..."
         aria-label="Recherche d'une fontaine"
+        [(ngModel)]="searchQuery"
+        name="search"
       />
-      <p-button label="Rechercher" icon="pi pi-search"></p-button>
+      <p-button
+        [label]="isMobileView ? '' : 'Démarrer la recherche'"
+        icon="pi pi-search"
+        [rounded]="isMobileView"
+        [ariaLabel]="isMobileView ? 'Démarrer la recherche' : undefined"
+        [loading]="isSearching"
+        [disabled]="isSearching"
+        (onClick)="startSearch()"
+      ></p-button>
+      <p-button
+        [label]="isMobileView ? '' : 'Utiliser ma position'"
+        icon="pi pi-map-marker"
+        severity="contrast"
+        [rounded]="isMobileView"
+        [ariaLabel]="isMobileView ? 'Utiliser ma position' : undefined"
+        [disabled]="isSearching"
+        (onClick)="useMyPosition()"
+      ></p-button>
+      @if (searchError) {
+        <p class="search-error">{{ searchError }}</p>
+      }
     </div>
-
+    <p-button
+      class="burger-toggle"
+      icon="pi pi-bars"
+      severity="secondary"
+      [rounded]="true"
+      ariaLabel="Ouvrir le menu"
+      (onClick)="toggleMobileMenu()"
+    ></p-button>
     <div class="actions" aria-label="Actions rapides">
       @for (action of quickActions; track action.label) {
         <p-button
@@ -25,19 +62,31 @@
         ></p-button>
       }
     </div>
+    <div class="header-wave" aria-hidden="true"></div>
   </header>
 
-  <main class="map-area">
-    <app-home-map></app-home-map>
-  </main>
-
-  <footer class="site-footer">
-    <span>© 2026 Woter</span>
-    <a href="#">Mentions légales</a>
-    <a href="#">Confidentialité</a>
-    <a href="#">Contact</a>
-  </footer>
-</div>
+  @if (showMobileMenu && isMobileView) {
+    <button class="mobile-menu-backdrop" type="button" aria-label="Fermer le menu" (click)="closeMobileMenu()"></button>
+    <aside class="mobile-menu" aria-label="Menu mobile">
+      <div class="mobile-menu-brand">
+        <img src="assets/images/woter.png" alt="Logo Woter" class="brand-logo" />
+        <h2>Woter Frontend</h2>
+      </div>
+      <p>Trouvez une fontaine fiable près de vous</p>
+      <div class="mobile-menu-actions">
+        @for (action of quickActions; track action.label) {
+          <p-button
+            [label]="action.label"
+            [icon]="action.icon"
+            severity="secondary"
+            [outlined]="action.label !== 'Connexion'"
+            (onClick)="onMobileActionClick(action.label)"
+          ></p-button>
+        }
+      </div>
+    </aside>
+  }
+</main>
 
 <p-dialog
   header="Connexion"

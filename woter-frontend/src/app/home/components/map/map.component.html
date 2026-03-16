@@ -1,15 +1,3 @@
 <section class="map-wrapper" aria-label="Carte Leaflet">
-  <div class="location-panel" aria-live="polite">
-    <p>{{ locationMessage }}</p>
-    @if (canRequestLocation) {
-      <p-button
-        [label]="isRequestingLocation ? 'Localisation...' : 'Utiliser ma position'"
-        icon="pi pi-map-marker"
-        size="small"
-        [disabled]="isRequestingLocation"
-        (onClick)="requestUserLocation()"
-      ></p-button>
-    }
-  </div>
   <div #mapContainer class="map-canvas"></div>
 </section>
